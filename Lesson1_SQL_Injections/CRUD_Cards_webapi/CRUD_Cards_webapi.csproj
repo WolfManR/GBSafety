@@ -8,11 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <PackageReference Include="Thundire.Helpers" Version="0.0.3-beta" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="EF\" />
-    <Folder Include="Services\" />
+    <Folder Include="EF\Entities\" />
   </ItemGroup>
 
 </Project>
