@@ -56,7 +56,7 @@ internal sealed class DebetCardsService : IDebetCardsService
         return Result<DebetCardResponse>.Ok(response);
     }
 
-    private DebetCardResponse ToResponse(DebetCardEntity entity) => new DebetCardResponse()
+    private static DebetCardResponse ToResponse(DebetCardEntity entity) => new DebetCardResponse()
     {
         Id = entity.Id,
         Number = entity.Number,
