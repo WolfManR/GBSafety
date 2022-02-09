@@ -14,7 +14,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<CardsDbContext>((p, o) => o.UseNpgsql(p.GetRequiredService<IConfiguration>().GetConnectionString("Postgree")));
 
-builder.Services.AddSingleton<IDebetCardsService, DebetCardsService>();
+builder.Services.AddScoped<IDebetCardsService, DebetCardsService>();
 
 var app = builder.Build();
 
@@ -31,16 +31,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("debet", (IDebetCardsService debetCardsService) => debetCardsService.Get());
+app.MapGet("debet", static async (IDebetCardsService debetCardsService) =>
+{
+    var data = await debetCardsService.Get();
+    return Results.Ok(data);
+});
 
-app.MapGet("debet/{id}", ([FromRoute] int id, IDebetCardsService debetCardsService) =>
+app.MapGet("debet/{id}", static async ([FromRoute] int id, IDebetCardsService debetCardsService) =>
 {
     if (id <= 0)
     {
         return Results.BadRequest();
     }
 
-    var result = debetCardsService.Get(id);
+    var result = await debetCardsService.Get(id);
 
     if (result is not SuccessResult<DebetCardResponse> successResult)
     {
@@ -50,29 +54,29 @@ app.MapGet("debet/{id}", ([FromRoute] int id, IDebetCardsService debetCardsServi
     return Results.Ok(successResult.CallBackData);
 });
 
-app.MapDelete("debet/{id}", ([FromRoute] int id, IDebetCardsService debetCardsService) =>
+app.MapDelete("debet/{id}", static async ([FromRoute] int id, IDebetCardsService debetCardsService) =>
 {
     if (id <= 0) return Results.BadRequest();
-    debetCardsService.Delete(id);
+    await debetCardsService.Delete(id);
     return Results.Ok();
 });
 
-app.MapPut("debet/{id}", ([FromRoute] int id, [FromBody] UpdateDebetCardRequest request, IDebetCardsService debetCardsService) =>
+app.MapPut("debet/{id}", static async ([FromRoute] int id, [FromBody] UpdateDebetCardRequest request, IDebetCardsService debetCardsService) =>
 {
     if (id <= 0) return Results.BadRequest();
 
     // Validate
 
-    var result = debetCardsService.Update(id, request);
+    var result = await debetCardsService.Update(id, request);
 
     return !result.IsSuccess ? Results.NotFound() : Results.Ok();
 });
 
-app.MapPost("debet", ([FromBody] CreateDebetCardRequest request, IDebetCardsService debetCardsService) =>
+app.MapPost("debet", static async ([FromBody] CreateDebetCardRequest request, IDebetCardsService debetCardsService) =>
 {
     // Validate
 
-    var result = debetCardsService.Create(request);
+    var result = await debetCardsService.Create(request);
 
     if (result is SuccessResult<int> successResult)
     {

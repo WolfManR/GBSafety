@@ -6,10 +6,10 @@ namespace CRUD_Cards_webapi.Services
 {
     internal interface IDebetCardsService
     {
-        Result<int> Create(CreateDebetCardRequest cardData);
-        void Delete(int id);
-        IEnumerable<DebetCardResponse> Get();
-        Result<DebetCardResponse> Get(int id);
-        Result Update(int id, UpdateDebetCardRequest cardData);
+        Task<Result<int>> Create(CreateDebetCardRequest cardData);
+        Task Delete(int id);
+        Task<IEnumerable<DebetCardResponse>> Get();
+        Task<Result<DebetCardResponse>> Get(int id);
+        Task<Result> Update(int id, UpdateDebetCardRequest cardData);
     }
 }
