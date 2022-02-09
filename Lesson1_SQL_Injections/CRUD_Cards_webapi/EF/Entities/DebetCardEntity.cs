@@ -1,6 +1,6 @@
 ﻿namespace CRUD_Cards_webapi.EF.Entities;
 
-public sealed class DebetCardEntity
+internal sealed class DebetCardEntity
 {
     public int Id { get; init; }
     public string Number { get; set; }
