@@ -1,7 +1,9 @@
+using CRUD_Cards_webapi.EF;
 using CRUD_Cards_webapi.Models;
 using CRUD_Cards_webapi.Services;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Thundire.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,9 +12,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<CardsDbContext>((p, o) => o.UseNpgsql(p.GetRequiredService<IConfiguration>().GetConnectionString("Postgree")));
+
 builder.Services.AddSingleton<IDebetCardsService, DebetCardsService>();
 
 var app = builder.Build();
+
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    await using var context = scope.ServiceProvider.GetRequiredService<CardsDbContext>();
+    await context.Database.MigrateAsync();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
