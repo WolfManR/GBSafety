@@ -25,9 +25,4 @@
     <PackageReference Include="Thundire.Helpers" Version="0.0.3-beta" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="EF\Entities\" />
-    <Folder Include="Validations\" />
-  </ItemGroup>
-
 </Project>
