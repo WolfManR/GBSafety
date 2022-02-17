@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <Folder Include="EF\Entities\" />
+    <Folder Include="Validations\" />
   </ItemGroup>
 
 </Project>

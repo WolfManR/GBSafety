@@ -1,7 +1,7 @@
 using CRUD_Cards_webapi.EF;
 using CRUD_Cards_webapi.Models;
 using CRUD_Cards_webapi.Services;
-
+using CRUD_Cards_webapi.Validations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Thundire.Helpers;
@@ -61,20 +61,22 @@ app.MapDelete("debet/{id}", static async ([FromRoute] int id, IDebetCardsService
     return Results.Ok();
 });
 
-app.MapPut("debet/{id}", static async ([FromRoute] int id, [FromBody] UpdateDebetCardRequest request, IDebetCardsService debetCardsService) =>
+app.MapPut("debet/{id}", static async ([FromRoute] int id, [FromBody] UpdateDebetCardRequest request, IDebetCardsService debetCardsService, DebetCardValidation validation) =>
 {
     if (id <= 0) return Results.BadRequest();
 
-    // Validate
+    var validationResult = await validation.ValidateAsync(request);
+    if (!validationResult.IsValid) return Results.BadRequest();
 
     var result = await debetCardsService.Update(id, request);
 
     return !result.IsSuccess ? Results.NotFound() : Results.Ok();
 });
 
-app.MapPost("debet", static async ([FromBody] CreateDebetCardRequest request, IDebetCardsService debetCardsService) =>
+app.MapPost("debet", static async ([FromBody] CreateDebetCardRequest request, IDebetCardsService debetCardsService, DebetCardValidation validation) =>
 {
-    // Validate
+    var validationResult = await validation.ValidateAsync(request);
+    if (!validationResult.IsValid) return Results.BadRequest();
 
     var result = await debetCardsService.Create(request);
 
