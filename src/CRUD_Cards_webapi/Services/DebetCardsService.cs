@@ -2,17 +2,18 @@
 using CRUD_Cards_webapi.EF.Entities;
 using CRUD_Cards_webapi.Models;
 
-using Microsoft.EntityFrameworkCore;
-
 using Thundire.Helpers;
 
 namespace CRUD_Cards_webapi.Services;
 
 internal sealed class DebetCardsService : IDebetCardsService
 {
-    private readonly CardsDbContext _context;
+    private readonly DebetCardsEFCoreRepository _efCoreDebetCardsRepository;
 
-    public DebetCardsService(CardsDbContext context) => _context = context;
+    public DebetCardsService(DebetCardsEFCoreRepository efCoreDebetCardsRepository)
+    {
+        _efCoreDebetCardsRepository = efCoreDebetCardsRepository;
+    }
 
     public async Task<Result<int>> Create(CreateDebetCardRequest cardData)
     {
@@ -23,46 +24,50 @@ internal sealed class DebetCardsService : IDebetCardsService
             ExpireMonth = cardData.ExpireMonth,
             ExpireYear = cardData.ExpireYear
         };
-        await _context.DebetCards.AddAsync(entity);
-        await _context.SaveChangesAsync();
+        var result = await _efCoreDebetCardsRepository.Create(entity);
 
-        return Result<int>.Ok(entity.Id);
+        if(result.IsSuccess) return Result<int>.Ok(entity.Id);
+
+        return Result<int>.Fail(new FailureDescription("Fail to create debet card", ""));
     }
 
     public async Task<Result> Update(int id, UpdateDebetCardRequest cardData)
     {
-        var entity = await _context.DebetCards.FirstOrDefaultAsync(e => e.Id == id);
-        if (entity is null) return Result.Fail();
+        var result = await _efCoreDebetCardsRepository.Update(new DebetCardEntity()
+        {
+            Id = id,
+            Holder = cardData.Holder,
+            Number = cardData.Number,
+            ExpireMonth = cardData.ExpireMonth,
+            ExpireYear = cardData.ExpireYear
+        });
 
-        entity.Number = cardData.Number;
-        entity.Holder = cardData.Holder;
-        entity.ExpireMonth = cardData.ExpireMonth;
-        entity.ExpireYear = cardData.ExpireYear;
+        if (result.IsSuccess) return Result.Ok();
 
-        await _context.SaveChangesAsync();
+        if (result is FailureResult failureResult)
+        {
+            // Log
+        }
 
-        return Result.Ok();
+        return Result.Fail(new FailureDescription("Fail to update debet card entry", ""));
     }
 
     public async Task Delete(int id)
     {
-        var entity = await _context.DebetCards.FirstOrDefaultAsync(e => e.Id == id);
-        if (entity is null) return;
-        _context.DebetCards.Remove(entity);
-        await _context.SaveChangesAsync();
+        await _efCoreDebetCardsRepository.Delete(id);
     }
 
     public async Task<IEnumerable<DebetCardResponse>> Get()
     {
-        var data = await _context.DebetCards.ToArrayAsync();
+        var data = await _efCoreDebetCardsRepository.Get();
         return data.Select(ToResponse);
     }
 
     public async Task<Result<DebetCardResponse>> Get(int id)
     {
-        var entity = await _context.DebetCards.FirstOrDefaultAsync(e => e.Id == id);
-        if (entity is null) return Result<DebetCardResponse>.Fail();
-        var response = ToResponse(entity);
+        var result = await _efCoreDebetCardsRepository.Get(id);
+        if (!result.IsSuccess) return Result<DebetCardResponse>.Fail();
+        var response = ToResponse(result.GetResult());
         return Result<DebetCardResponse>.Ok(response);
     }
 
