@@ -1,4 +1,4 @@
-﻿namespace CRUD_Cards_webapi.Dapper.Entities;
+﻿namespace CRUD_Cards_webapi.Entities;
 
 internal sealed class DebetCardEntity
 {
