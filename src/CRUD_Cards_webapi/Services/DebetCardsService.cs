@@ -1,5 +1,5 @@
 ﻿using CRUD_Cards_webapi.EF;
-using CRUD_Cards_webapi.EF.Entities;
+using CRUD_Cards_webapi.Entities;
 using CRUD_Cards_webapi.Models;
 
 using Thundire.Helpers;

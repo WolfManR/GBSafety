@@ -1,4 +1,4 @@
-﻿using CRUD_Cards_webapi.EF.Entities;
+﻿using CRUD_Cards_webapi.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CRUD_Cards_webapi.EF;

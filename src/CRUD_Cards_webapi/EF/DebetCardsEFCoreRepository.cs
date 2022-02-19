@@ -1,4 +1,4 @@
-﻿using CRUD_Cards_webapi.EF.Entities;
+﻿using CRUD_Cards_webapi.Entities;
 using Microsoft.EntityFrameworkCore;
 using Thundire.Helpers;
 
