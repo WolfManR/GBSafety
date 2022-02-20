@@ -8,11 +8,11 @@ namespace CRUD_Cards_webapi.Services;
 
 internal sealed class EFCoreDebetCardsService
 {
-    private readonly EFCoreDebetCardsRepository _efCoreDebetCardsRepository;
+    private readonly EFCoreDebetCardsRepository _repository;
 
-    public EFCoreDebetCardsService(EFCoreDebetCardsRepository efCoreDebetCardsRepository)
+    public EFCoreDebetCardsService(EFCoreDebetCardsRepository repository)
     {
-        _efCoreDebetCardsRepository = efCoreDebetCardsRepository;
+        _repository = repository;
     }
 
     public async Task<Result<int>> Create(CreateDebetCardRequest cardData)
@@ -24,7 +24,7 @@ internal sealed class EFCoreDebetCardsService
             ExpireMonth = cardData.ExpireMonth,
             ExpireYear = cardData.ExpireYear
         };
-        var result = await _efCoreDebetCardsRepository.Create(entity);
+        var result = await _repository.Create(entity);
 
         if(result.IsSuccess) return Result<int>.Ok(entity.Id);
 
@@ -33,7 +33,7 @@ internal sealed class EFCoreDebetCardsService
 
     public async Task<Result> Update(int id, UpdateDebetCardRequest cardData)
     {
-        var result = await _efCoreDebetCardsRepository.Update(new DebetCardEntity()
+        var result = await _repository.Update(new DebetCardEntity()
         {
             Id = id,
             Holder = cardData.Holder,
@@ -54,18 +54,18 @@ internal sealed class EFCoreDebetCardsService
 
     public async Task Delete(int id)
     {
-        await _efCoreDebetCardsRepository.Delete(id);
+        await _repository.Delete(id);
     }
 
     public async Task<IEnumerable<DebetCardResponse>> Get()
     {
-        var data = await _efCoreDebetCardsRepository.Get();
+        var data = await _repository.Get();
         return data.Select(ToResponse);
     }
 
     public async Task<Result<DebetCardResponse>> Get(int id)
     {
-        var result = await _efCoreDebetCardsRepository.Get(id);
+        var result = await _repository.Get(id);
         if (!result.IsSuccess) return Result<DebetCardResponse>.Fail();
         var response = ToResponse(result.GetResult());
         return Result<DebetCardResponse>.Ok(response);
