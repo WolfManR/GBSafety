@@ -1,14 +1,15 @@
-﻿using CRUD_Cards_webapi.Entities;
+﻿using CRUD_Cards_webapi.EF;
+using CRUD_Cards_webapi.Entities;
 using Microsoft.EntityFrameworkCore;
 using Thundire.Helpers;
 
-namespace CRUD_Cards_webapi.EF;
+namespace CRUD_Cards_webapi.Services;
 
-internal sealed class DebetCardsEFCoreRepository
+internal sealed class EFCoreDebetCardsRepository
 {
     private readonly CardsDbContext _context;
 
-    public DebetCardsEFCoreRepository(CardsDbContext context) => _context = context;
+    public EFCoreDebetCardsRepository(CardsDbContext context) => _context = context;
 
     public async Task<Result<int>> Create(DebetCardEntity entity)
     {

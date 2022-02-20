@@ -6,11 +6,11 @@ using Thundire.Helpers;
 
 namespace CRUD_Cards_webapi.Services;
 
-internal sealed class DebetCardsService : IDebetCardsService
+internal sealed class EFCoreDebetCardsService
 {
-    private readonly DebetCardsEFCoreRepository _efCoreDebetCardsRepository;
+    private readonly EFCoreDebetCardsRepository _efCoreDebetCardsRepository;
 
-    public DebetCardsService(DebetCardsEFCoreRepository efCoreDebetCardsRepository)
+    public EFCoreDebetCardsService(EFCoreDebetCardsRepository efCoreDebetCardsRepository)
     {
         _efCoreDebetCardsRepository = efCoreDebetCardsRepository;
     }

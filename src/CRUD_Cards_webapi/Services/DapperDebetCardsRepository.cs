@@ -1,12 +1,11 @@
-﻿using CRUD_Cards_webapi.Entities;
-
+﻿using CRUD_Cards_webapi.Dapper;
+using CRUD_Cards_webapi.Entities;
 using Dapper;
-
 using Thundire.Helpers;
 
-namespace CRUD_Cards_webapi.Dapper;
+namespace CRUD_Cards_webapi.Services;
 
-internal sealed class DebetCardsDapperRepository
+internal sealed class DapperDebetCardsRepository
 {
     private readonly CardsDapperDbContext _context;
 
@@ -18,7 +17,7 @@ internal sealed class DebetCardsDapperRepository
     private const string sqlDelete = $"DELETE FROM {TableName} WHERE Id = @Id;";
     private const string sqlUpdate = $"UPDATE {TableName} SET Number = @Number, Holder = @Holder, ExpireMonth = @ExpireMonth, ExpireYear = @ExpireYear) WHERE Id = @Id;";
 
-    public DebetCardsDapperRepository(CardsDapperDbContext context)
+    public DapperDebetCardsRepository(CardsDapperDbContext context)
     {
         _context = context;
     }
