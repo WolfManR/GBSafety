@@ -1,22 +1,24 @@
-﻿using FluentMigrator;
+﻿using Dapper;
 
 namespace CRUD_Cards_webapi.Dapper.Migrations;
 
-[Migration(14218022022)]
-public class InitMigration : Migration
+public class InitMigration
 {
-    public override void Up()
+    private readonly CardsDapperDbContext _context;
+
+    public InitMigration(CardsDapperDbContext context)
     {
-        Create.Table("DebetCards")
-            .WithColumn("Id").AsGuid().PrimaryKey().Identity()
-            .WithColumn("Number").AsString()
-            .WithColumn("Holder").AsString()
-            .WithColumn("ExpireMonth").AsInt32()
-            .WithColumn("ExpireYear").AsInt32();
+        _context = context;
     }
 
-    public override void Down()
+    public async Task Up()
     {
-        Delete.Table("DebetCards");
+        await _context.Connection.ExecuteAsync(@"CREATE TABLE ""DebetCards"" (
+        ""Id"" serial NOT NULL,PRIMARY KEY(""Id""),
+        ""Number"" text NOT NULL,
+        ""Holder"" text NOT NULL,
+        ""ExpireMonth"" integer NOT NULL,
+        ""ExpireYear"" integer NOT NULL
+            );");
     }
 }
