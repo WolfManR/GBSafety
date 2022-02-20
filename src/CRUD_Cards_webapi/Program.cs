@@ -20,8 +20,9 @@ builder.Services.AddDbContext<CardsDbContext>((p, o) => o.UseNpgsql(p.GetRequire
 
 builder.Services
     .AddScoped<InitMigration>()
+    .AddScoped<CardsDapperDbContext>()
     .AddScoped<DapperDebetCardsRepository>()
-    .AddScoped<CardsDapperDbContext>();
+    .AddScoped<DapperDebetCardsService>();
 
 builder.Services
     .AddScoped<EFCoreDebetCardsRepository>()
@@ -34,6 +35,9 @@ var app = builder.Build();
 
 await using (var scope = app.Services.CreateAsyncScope())
 {
+    var dapperInitMigration = scope.ServiceProvider.GetRequiredService<InitMigration>();
+    await dapperInitMigration.Up();
+
     await using var context = scope.ServiceProvider.GetRequiredService<CardsDbContext>();
     await context.Database.MigrateAsync();
 }
@@ -88,6 +92,64 @@ app.MapPut("debet/{id}", static async ([FromRoute] int id, [FromBody] UpdateDebe
 });
 
 app.MapPost("debet", static async ([FromBody] CreateDebetCardRequest request, EFCoreDebetCardsService debetCardsService, IValidator<DebetCardBase> validation) =>
+{
+    var validationResult = await validation.ValidateAsync(request);
+    if (!validationResult.IsValid) return Results.BadRequest();
+
+    var result = await debetCardsService.Create(request);
+
+    if (result is SuccessResult<int> successResult)
+    {
+        return Results.Ok(successResult.CallBackData);
+    }
+
+    return Results.BadRequest();
+});
+
+
+app.MapGet("dapper/debet", static async (DapperDebetCardsService debetCardsService) =>
+{
+    var data = await debetCardsService.Get();
+    return Results.Ok(data);
+});
+
+app.MapGet("dapper/debet/{id}", static async ([FromRoute] int id, DapperDebetCardsService debetCardsService) =>
+{
+    if (id <= 0)
+    {
+        return Results.BadRequest();
+    }
+
+    var result = await debetCardsService.Get(id);
+
+    if (result is not SuccessResult<DebetCardResponse> successResult)
+    {
+        return Results.NotFound();
+    }
+
+    return Results.Ok(successResult.CallBackData);
+});
+
+app.MapDelete("dapper/debet/{id}", static async ([FromRoute] int id, DapperDebetCardsService debetCardsService) =>
+{
+    if (id <= 0) return Results.BadRequest();
+    await debetCardsService.Delete(id);
+    return Results.Ok();
+});
+
+app.MapPut("dapper/debet/{id}", static async ([FromRoute] int id, [FromBody] UpdateDebetCardRequest request, DapperDebetCardsService debetCardsService, IValidator<DebetCardBase> validation) =>
+{
+    if (id <= 0) return Results.BadRequest();
+
+    var validationResult = await validation.ValidateAsync(request);
+    if (!validationResult.IsValid) return Results.BadRequest();
+
+    var result = await debetCardsService.Update(id, request);
+
+    return !result.IsSuccess ? Results.NotFound() : Results.Ok();
+});
+
+app.MapPost("dapper/debet", static async ([FromBody] CreateDebetCardRequest request, DapperDebetCardsService debetCardsService, IValidator<DebetCardBase> validation) =>
 {
     var validationResult = await validation.ValidateAsync(request);
     if (!validationResult.IsValid) return Results.BadRequest();
