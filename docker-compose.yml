@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  crud_cards_webapi:
+    image: ${DOCKER_REGISTRY-}crudcardswebapi
+    build:
+      context: .
+      dockerfile: src/CRUD_Cards_webapi/Dockerfile
