@@ -20,7 +20,13 @@ builder.Services.AddDbContext<CardsDbContext>((p, o) => o.UseNpgsql(p.GetRequire
 
 builder.Services
     .AddScoped<InitMigration>()
-    .AddScoped<CardsDapperDbContext>()
+    .AddScoped<CardsDapperDbContext>(provider =>
+    {
+        var configuration = provider.GetRequiredService<IConfiguration>();
+        var connectionString = configuration.GetConnectionString("PostgreeDapper");
+        var database = configuration.GetValue<string>("DapperDatabase");
+        return new CardsDapperDbContext(connectionString, database);
+    })
     .AddScoped<DapperDebetCardsRepository>()
     .AddScoped<DapperDebetCardsService>();
 
@@ -59,7 +65,7 @@ app.MapGet("debet/{id}", static async ([FromRoute] int id, EFCoreDebetCardsServi
 {
     if (id <= 0)
     {
-        return Results.BadRequest();
+        return Results.BadRequest("id cannot be lower 1");
     }
 
     var result = await debetCardsService.Get(id);
@@ -74,7 +80,7 @@ app.MapGet("debet/{id}", static async ([FromRoute] int id, EFCoreDebetCardsServi
 
 app.MapDelete("debet/{id}", static async ([FromRoute] int id, EFCoreDebetCardsService debetCardsService) =>
 {
-    if (id <= 0) return Results.BadRequest();
+    if (id <= 0) return Results.BadRequest("id cannot be lower 1");
     await debetCardsService.Delete(id);
     return Results.Ok();
 });
@@ -84,7 +90,7 @@ app.MapPut("debet/{id}", static async ([FromRoute] int id, [FromBody] UpdateDebe
     if (id <= 0) return Results.BadRequest();
 
     var validationResult = await validation.ValidateAsync(request);
-    if (!validationResult.IsValid) return Results.BadRequest();
+    if (!validationResult.IsValid) return Results.BadRequest(validationResult.Errors);
 
     var result = await debetCardsService.Update(id, request);
 
@@ -94,7 +100,7 @@ app.MapPut("debet/{id}", static async ([FromRoute] int id, [FromBody] UpdateDebe
 app.MapPost("debet", static async ([FromBody] CreateDebetCardRequest request, EFCoreDebetCardsService debetCardsService, IValidator<DebetCardBase> validation) =>
 {
     var validationResult = await validation.ValidateAsync(request);
-    if (!validationResult.IsValid) return Results.BadRequest();
+    if (!validationResult.IsValid) return Results.BadRequest(validationResult.Errors);
 
     var result = await debetCardsService.Create(request);
 
@@ -117,7 +123,7 @@ app.MapGet("dapper/debet/{id}", static async ([FromRoute] int id, DapperDebetCar
 {
     if (id <= 0)
     {
-        return Results.BadRequest();
+        return Results.BadRequest("id cannot be lower 1");
     }
 
     var result = await debetCardsService.Get(id);
@@ -132,7 +138,7 @@ app.MapGet("dapper/debet/{id}", static async ([FromRoute] int id, DapperDebetCar
 
 app.MapDelete("dapper/debet/{id}", static async ([FromRoute] int id, DapperDebetCardsService debetCardsService) =>
 {
-    if (id <= 0) return Results.BadRequest();
+    if (id <= 0) return Results.BadRequest("id cannot be lower 1");
     await debetCardsService.Delete(id);
     return Results.Ok();
 });
@@ -142,7 +148,7 @@ app.MapPut("dapper/debet/{id}", static async ([FromRoute] int id, [FromBody] Upd
     if (id <= 0) return Results.BadRequest();
 
     var validationResult = await validation.ValidateAsync(request);
-    if (!validationResult.IsValid) return Results.BadRequest();
+    if (!validationResult.IsValid) return Results.BadRequest(validationResult.Errors);
 
     var result = await debetCardsService.Update(id, request);
 
@@ -152,7 +158,7 @@ app.MapPut("dapper/debet/{id}", static async ([FromRoute] int id, [FromBody] Upd
 app.MapPost("dapper/debet", static async ([FromBody] CreateDebetCardRequest request, DapperDebetCardsService debetCardsService, IValidator<DebetCardBase> validation) =>
 {
     var validationResult = await validation.ValidateAsync(request);
-    if (!validationResult.IsValid) return Results.BadRequest();
+    if (!validationResult.IsValid) return Results.BadRequest(validationResult.Errors);
 
     var result = await debetCardsService.Create(request);
 

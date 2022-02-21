@@ -1,18 +1,32 @@
 ﻿using Npgsql;
 
 using System.Data;
+using Dapper;
 
 namespace CRUD_Cards_webapi.Dapper;
 
 public class CardsDapperDbContext : IAsyncDisposable
 {
-    private readonly IDbConnection _connection;
+    private readonly NpgsqlConnection _connection;
     private bool _disposed;
 
-    public CardsDapperDbContext(string connectionString)
+    public CardsDapperDbContext(string connectionString, string database)
     {
         _connection = new NpgsqlConnection(connectionString);
         _connection.Open();
+        try
+        {
+            _connection.ChangeDatabase(database);
+        }
+        catch (PostgresException e)
+        {
+            _connection = new NpgsqlConnection(connectionString);
+            _connection.Open();
+            var command = _connection.CreateCommand();
+            command.CommandText = $"CREATE DATABASE \"{database}\"";
+            command.ExecuteNonQuery();
+            _connection.ChangeDatabase(database);
+        }
     }
 
     public IDbConnection Connection
@@ -28,7 +42,7 @@ public class CardsDapperDbContext : IAsyncDisposable
     {
         _disposed = true;
         _connection.Close();
-        Connection.Dispose();
+        _connection.Dispose();
         return ValueTask.CompletedTask;
     }
 }
