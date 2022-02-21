@@ -9,13 +9,13 @@ internal sealed class DapperDebetCardsRepository
 {
     private readonly CardsDapperDbContext _context;
 
-    private const string TableName = "DebetCards";
+    private const string TableName = "\"DebetCards\"";
 
     private const string sqlGetAllCards = $"SELECT * FROM {TableName}";
-    private const string sqlGetById = $"SELECT * FROM {TableName} WHERE Id = @Id";
-    private const string sqlInsert = $"INSERT INTO {TableName} Values (@Number, @Holder, @ExpireMonth, @ExpireYear) RETURNING id;";
-    private const string sqlDelete = $"DELETE FROM {TableName} WHERE Id = @Id;";
-    private const string sqlUpdate = $"UPDATE {TableName} SET Number = @Number, Holder = @Holder, ExpireMonth = @ExpireMonth, ExpireYear = @ExpireYear) WHERE Id = @Id;";
+    private const string sqlGetById = $"SELECT * FROM {TableName} WHERE \"Id\" = @Id";
+    private const string sqlInsert = $"INSERT INTO {TableName} (\"Number\", \"Holder\", \"ExpireMonth\", \"ExpireYear\") Values (@Number, @Holder, @ExpireMonth, @ExpireYear) RETURNING \"Id\";";
+    private const string sqlDelete = $"DELETE FROM {TableName} WHERE \"Id\" = @Id;";
+    private const string sqlUpdate = $"UPDATE {TableName} SET \"Number\" = @Number, \"Holder\" = @Holder, \"ExpireMonth\" = @ExpireMonth, \"ExpireYear\" = @ExpireYear WHERE \"Id\" = @Id;";
 
     public DapperDebetCardsRepository(CardsDapperDbContext context)
     {
@@ -39,6 +39,7 @@ internal sealed class DapperDebetCardsRepository
     {
         var affectedRows = await _context.Connection.ExecuteAsync(sqlUpdate, new
         {
+            Id = cardData.Id,
             Number = cardData.Number,
             Holder = cardData.Holder,
             ExpireMonth = cardData.ExpireMonth,
