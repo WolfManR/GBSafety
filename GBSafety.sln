@@ -5,7 +5,9 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7F38AB90-A5A6-48FB-9044-DE478E11F81E}"
 	ProjectSection(SolutionItems) = preProject
+		.env = .env
 		.gitignore = .gitignore
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRUD_Cards_webapi", "src\CRUD_Cards_webapi\CRUD_Cards_webapi.csproj", "{89B7EFB1-78DC-46F9-AA6D-D41230569CC5}"

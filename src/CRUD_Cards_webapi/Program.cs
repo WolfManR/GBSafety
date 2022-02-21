@@ -41,11 +41,11 @@ var app = builder.Build();
 
 await using (var scope = app.Services.CreateAsyncScope())
 {
-    var dapperInitMigration = scope.ServiceProvider.GetRequiredService<InitMigration>();
-    await dapperInitMigration.Up();
-
     await using var context = scope.ServiceProvider.GetRequiredService<CardsDbContext>();
     await context.Database.MigrateAsync();
+
+    var dapperInitMigration = scope.ServiceProvider.GetRequiredService<InitMigration>();
+    await dapperInitMigration.Up();
 }
 
 // Configure the HTTP request pipeline.
