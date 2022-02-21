@@ -24,7 +24,7 @@ internal sealed class DapperDebetCardsService
         };
         var result = await _repository.Create(entity);
 
-        if (result.IsSuccess) return Result<int>.Ok(entity.Id);
+        if (result.IsSuccess) return Result<int>.Ok(result.GetResult());
 
         return Result<int>.Fail(new FailureDescription("Fail to create debet card", ""));
     }
