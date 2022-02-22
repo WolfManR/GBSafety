@@ -14,6 +14,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRUD_Cards_webapi", "src\CR
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{02364CFB-A470-4CAF-A651-D2872A3420CF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity_Server", "src\Identity_Server\Identity_Server.csproj", "{7BDFAB64-1BAA-4CBE-B22C-45ECFB9574F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,6 +30,10 @@ Global
 		{02364CFB-A470-4CAF-A651-D2872A3420CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02364CFB-A470-4CAF-A651-D2872A3420CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02364CFB-A470-4CAF-A651-D2872A3420CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BDFAB64-1BAA-4CBE-B22C-45ECFB9574F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BDFAB64-1BAA-4CBE-B22C-45ECFB9574F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BDFAB64-1BAA-4CBE-B22C-45ECFB9574F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BDFAB64-1BAA-4CBE-B22C-45ECFB9574F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
