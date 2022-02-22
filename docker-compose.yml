@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  crud_cards_webapi:
+    image: ${DOCKER_REGISTRY-}crudcardswebapi
+    build:
+      context: .
+      dockerfile: src/CRUD_Cards_webapi/Dockerfile
+    environment:
+       ConnectionStrings__PostgreeEF: ${POSTGREEEFCORE};
+       ConnectionStrings__PostgreeDapper: ${POSGREEDAPPER};
+       DapperDatabase: ${POSTGREEDAPPERCARDSDB};
+    depends_on:
+      - db
+     
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${POSTGREEUSER}
+      POSTGRES_USER: ${POSTGREEPASSWORD}
+    ports:
+    - ${POSTGREEOUTPORT}:5432
+    volumes:
+    - ./tarxosgbsafetydata:/var/lib/postgresql/data
+
+volumes:
+  tarxosgbsafetydata:

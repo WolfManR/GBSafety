@@ -5,13 +5,29 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7F38AB90-A5A6-48FB-9044-DE478E11F81E}"
 	ProjectSection(SolutionItems) = preProject
+		.env = .env
 		.gitignore = .gitignore
+		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRUD_Cards_webapi", "src\CRUD_Cards_webapi\CRUD_Cards_webapi.csproj", "{89B7EFB1-78DC-46F9-AA6D-D41230569CC5}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{02364CFB-A470-4CAF-A651-D2872A3420CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{89B7EFB1-78DC-46F9-AA6D-D41230569CC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89B7EFB1-78DC-46F9-AA6D-D41230569CC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89B7EFB1-78DC-46F9-AA6D-D41230569CC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89B7EFB1-78DC-46F9-AA6D-D41230569CC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02364CFB-A470-4CAF-A651-D2872A3420CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02364CFB-A470-4CAF-A651-D2872A3420CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02364CFB-A470-4CAF-A651-D2872A3420CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02364CFB-A470-4CAF-A651-D2872A3420CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
