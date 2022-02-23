@@ -1,4 +1,5 @@
 using Authentication.Domain;
+using Identity_Server;
 using Identity_Server.DAL;
 
 using Microsoft.AspNetCore.Identity;
@@ -27,6 +28,8 @@ builder.Services
     })
     .AddEntityFrameworkStores<IdentityDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddScoped<AuthenticationService>();
 
 builder.Services.RegisterBaseCors(corsPolicyAlias);
 
