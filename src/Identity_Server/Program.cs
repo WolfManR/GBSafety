@@ -1,14 +1,16 @@
+using Authentication.Domain;
 using Identity_Server.DAL;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
+const string corsPolicyAlias = "AuthPolicy";
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 builder.Services
     .AddDbContext<IdentityDbContext>((provider, options) =>
@@ -26,6 +28,12 @@ builder.Services
     .AddEntityFrameworkStores<IdentityDbContext>()
     .AddDefaultTokenProviders();
 
+builder.Services.RegisterBaseCors(corsPolicyAlias);
+
+builder.Services.ConfigureAuthentication(builder.Configuration);
+
+builder.Services.AddSwaggerGen(c => c.ConfigureSwaggerAuthentication());
+
 var app = builder.Build();
 
 await using (var scope = app.Services.CreateAsyncScope())
@@ -40,6 +48,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(corsPolicyAlias);
 app.UseAuthentication();
 app.UseAuthorization();
 
