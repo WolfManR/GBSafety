@@ -1,3 +1,8 @@
+using Identity_Server.DAL;
+
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,13 +10,37 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services
+    .AddDbContext<IdentityDbContext>((provider, options) =>
+    {
+        var connectionString = provider.GetRequiredService<IConfiguration>().GetConnectionString("Identity");
+        options.UseNpgsql(connectionString);
+    })
+    .AddIdentity<AuthenticationUser, IdentityRole>(options =>
+    {
+        options.Password.RequiredLength = 4;
+        options.Password.RequireDigit = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+    })
+    .AddEntityFrameworkStores<IdentityDbContext>()
+    .AddDefaultTokenProviders();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    await using var context = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
+    await context.Database.MigrateAsync();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();
