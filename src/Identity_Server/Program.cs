@@ -55,4 +55,20 @@ app.UseCors(corsPolicyAlias);
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapPost("signin", async (string login, string password, AuthenticationService authenticationService) =>
+{
+    var result = await authenticationService.Authenticate(login, password);
+    if(!result.IsSuccess) return Results.BadRequest();
+
+    return Results.Ok(result.GetResult());
+});
+
+app.MapPost("signup", async (string login, string password, AuthenticationService authenticationService) =>
+{
+    var succeed = await authenticationService.RegisterUser(login, password);
+    if (succeed) return Results.BadRequest();
+
+    return Results.Ok();
+});
+
 app.Run();
