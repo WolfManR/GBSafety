@@ -3,6 +3,7 @@ using Identity_Server;
 using Identity_Server.DAL;
 
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 const string corsPolicyAlias = "AuthPolicy";
@@ -55,20 +56,22 @@ app.UseCors(corsPolicyAlias);
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapPost("signin", async (string login, string password, AuthenticationService authenticationService) =>
+app.MapPost("signin", async ([FromBody] Credentials credentials, AuthenticationService authenticationService) =>
 {
-    var result = await authenticationService.Authenticate(login, password);
+    var result = await authenticationService.Authenticate(credentials.Login, credentials.Password);
     if(!result.IsSuccess) return Results.BadRequest();
 
     return Results.Ok(result.GetResult());
 });
 
-app.MapPost("signup", async (string login, string password, AuthenticationService authenticationService) =>
+app.MapPost("signup", async ([FromBody] Credentials credentials, AuthenticationService authenticationService) =>
 {
-    var succeed = await authenticationService.RegisterUser(login, password);
+    var succeed = await authenticationService.RegisterUser(credentials.Login, credentials.Password);
     if (succeed) return Results.BadRequest();
 
     return Results.Ok();
 });
 
 app.Run();
+
+sealed record Credentials(string Login, string Password);
