@@ -1,12 +1,15 @@
 using Authentication.Domain;
+
 using Identity_Server;
 using Identity_Server.DAL;
+using Identity_Server.Models;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 const string corsPolicyAlias = "AuthPolicy";
+const string refreshTokenCookieId = "refreshToken";
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,7 +33,9 @@ builder.Services
     .AddEntityFrameworkStores<IdentityDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddScoped<AuthenticationService>();
+builder.Services
+    .AddScoped<AuthenticationService>()
+    .AddScoped<AuthorizationHelper>();
 
 builder.Services.RegisterBaseCors(corsPolicyAlias);
 
@@ -56,15 +61,24 @@ app.UseCors(corsPolicyAlias);
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapPost("signin", async ([FromBody] Credentials credentials, AuthenticationService authenticationService) =>
+app.MapPost("signin", async static ([FromBody] Credentials credentials, HttpContext context, AuthenticationService authenticationService) =>
 {
     var result = await authenticationService.Authenticate(credentials.Login, credentials.Password);
     if(!result.IsSuccess) return Results.BadRequest();
 
-    return Results.Ok(result.GetResult());
+    TokenData tokenData = result.GetResult();
+
+    CookieOptions refreshTokenCookieOptions = new()
+    {
+        HttpOnly = true,
+        Expires = tokenData.RefreshTokenExpirationDate
+    };
+    context.Response.Cookies.Append(refreshTokenCookieId, tokenData.RefreshToken, refreshTokenCookieOptions);
+
+    return Results.Ok(tokenData.Token);
 });
 
-app.MapPost("signup", async ([FromBody] Credentials credentials, AuthenticationService authenticationService) =>
+app.MapPost("signup", async static ([FromBody] Credentials credentials, AuthenticationService authenticationService) =>
 {
     var succeed = await authenticationService.RegisterUser(credentials.Login, credentials.Password);
     if (succeed) return Results.BadRequest();
@@ -72,6 +86,21 @@ app.MapPost("signup", async ([FromBody] Credentials credentials, AuthenticationS
     return Results.Ok();
 });
 
-app.Run();
+app.MapPost("refresh-token", async static (HttpContext context, AuthenticationService authenticationService) =>
+{
+    if(!context.Request.Cookies.TryGetValue(refreshTokenCookieId, out var oldRefreshToken)) return Results.Unauthorized();
+    var result = await authenticationService.RefreshToken(oldRefreshToken!);
+    if (!result.IsSuccess) return Results.Unauthorized();
 
-sealed record Credentials(string Login, string Password);
+    (string newRefreshToken, DateTime newExpiration) = result.GetResult();
+
+    CookieOptions refreshTokenCookieOptions = new()
+    {
+        HttpOnly = true,
+        Expires = newExpiration
+    };
+    context.Response.Cookies.Append(refreshTokenCookieId, newRefreshToken, refreshTokenCookieOptions);
+    return Results.Ok();
+}).RequireAuthorization();
+
+app.Run();
