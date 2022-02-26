@@ -25,10 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DAL\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Authentication.Domain\Authentication.Domain.csproj" />
   </ItemGroup>
 
