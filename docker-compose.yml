@@ -12,7 +12,31 @@ services:
        DapperDatabase: ${POSTGREEDAPPERCARDSDB};
     depends_on:
       - db
+
+  identity_server:
+    image: ${DOCKER_REGISTRY-}identityserver
+    build:
+      context: .
+      dockerfile: src/Identity_Server/Dockerfile
+    environment:
+       ConnectionStrings__Identity: ${POSTGREEIDENTITYEFCORE};
+       JwtSettings__SecureCode: ${IDENTITYSECURECODE}
+       JwtSettings__ValidAudience: crud_cards_webapi
+       JwtSettings__ValidIssuer: identity_server
+    depends_on:
+      - identitydb
      
+
+  identitydb:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${POSTGREEUSER}
+      POSTGRES_USER: ${POSTGREEPASSWORD}
+    ports:
+    - ${POSTGREEIDENTITYOUTPORT}:5432
+    volumes:
+    - ./tarxosgbsafetydata:/var/lib/postgresql/identitydata
 
   db:
     image: postgres
