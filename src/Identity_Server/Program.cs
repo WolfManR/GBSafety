@@ -18,7 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services
-    .AddDbContext<IdentityDbContext>((provider, options) =>
+    .AddDbContext<AuthenticationDbContext>((provider, options) =>
     {
         var connectionString = provider.GetRequiredService<IConfiguration>().GetConnectionString("Identity");
         options.UseNpgsql(connectionString);
@@ -30,7 +30,7 @@ builder.Services
         options.Password.RequireNonAlphanumeric = false;
         options.Password.RequireUppercase = false;
     })
-    .AddEntityFrameworkStores<IdentityDbContext>()
+    .AddEntityFrameworkStores<AuthenticationDbContext>()
     .AddDefaultTokenProviders();
 
 builder.Services
@@ -40,6 +40,12 @@ builder.Services
 builder.Services.RegisterBaseCors(corsPolicyAlias);
 
 builder.Services.ConfigureAuthentication(builder.Configuration);
+builder.Services.AddAuthorization(o =>
+{
+    o.AddPolicy("auth", policyBuilder => policyBuilder.
+        RequireAuthenticatedUser()
+    );
+});
 
 builder.Services.AddSwaggerGen(c => c.ConfigureSwaggerAuthentication());
 
@@ -47,7 +53,7 @@ var app = builder.Build();
 
 await using (var scope = app.Services.CreateAsyncScope())
 {
-    await using var context = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
+    await using var context = scope.ServiceProvider.GetRequiredService<AuthenticationDbContext>();
     await context.Database.MigrateAsync();
 }
 
@@ -101,6 +107,6 @@ app.MapPost("refresh-token", async static (HttpContext context, AuthenticationSe
     };
     context.Response.Cookies.Append(refreshTokenCookieId, newRefreshToken, refreshTokenCookieOptions);
     return Results.Ok();
-}).RequireAuthorization();
+}).RequireAuthorization("auth");
 
 app.Run();
