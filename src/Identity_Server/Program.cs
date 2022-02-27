@@ -57,11 +57,8 @@ await using (var scope = app.Services.CreateAsyncScope())
     await context.Database.MigrateAsync();
 }
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors(corsPolicyAlias);
 app.UseAuthentication();
@@ -86,8 +83,8 @@ app.MapPost("signin", async static ([FromBody] Credentials credentials, HttpCont
 
 app.MapPost("signup", async static ([FromBody] Credentials credentials, AuthenticationService authenticationService) =>
 {
-    var succeed = await authenticationService.RegisterUser(credentials.Login, credentials.Password);
-    if (succeed) return Results.BadRequest();
+    var isSucceed = await authenticationService.RegisterUser(credentials.Login, credentials.Password);
+    if (!isSucceed) return Results.BadRequest();
 
     return Results.Ok();
 });
