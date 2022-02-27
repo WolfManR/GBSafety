@@ -10,6 +10,8 @@ services:
        ConnectionStrings__PostgreeEF: ${POSTGREEEFCORE};
        ConnectionStrings__PostgreeDapper: ${POSGREEDAPPER};
        DapperDatabase: ${POSTGREEDAPPERCARDSDB};
+    ports:
+    - ${CRUDCARDSAPIOUTPUTPORT}:80
     depends_on:
       - db
 
@@ -23,6 +25,8 @@ services:
        JwtSettings__SecureCode: ${IDENTITYSECURECODE}
        JwtSettings__ValidAudience: crud_cards_webapi
        JwtSettings__ValidIssuer: identity_server
+    ports:
+    - ${IDENTITYSERVEROUTPUTPORT}:80
     depends_on:
       - identitydb
      
