@@ -16,7 +16,17 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity_Server", "src\Identity_Server\Identity_Server.csproj", "{7BDFAB64-1BAA-4CBE-B22C-45ECFB9574F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authentication.Domain", "src\Authentication.Domain\Authentication.Domain.csproj", "{8D3F3B61-FCFD-4B06-94EE-6FA81D8E444E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authentication.Domain", "src\Authentication.Domain\Authentication.Domain.csproj", "{8D3F3B61-FCFD-4B06-94EE-6FA81D8E444E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OtherThemes", "OtherThemes", "{8B5B87A5-D495-4D11-AC01-028B3F024071}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AssembliesAndProjectsSinging", "AssembliesAndProjectsSinging", "{90074C60-3E94-41BC-8C48-CA4EFAE76B1F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppModule1", "src\OtherThemes\AssembliesAndProjectSigning\AppModule1\AppModule1.csproj", "{14CD9BFD-8784-4CF9-B212-6FAE68E81DFD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppModules.Core", "src\OtherThemes\AssembliesAndProjectSigning\AppModules.Core\AppModules.Core.csproj", "{30047B3A-3F23-4C5F-A8A8-076043A43B92}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppModules.ConsoleApp", "src\OtherThemes\AssembliesAndProjectSigning\AppModules.ConsoleApp\AppModules.ConsoleApp.csproj", "{2158812E-856E-49B2-89FE-DA7F1E099C49}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,9 +50,27 @@ Global
 		{8D3F3B61-FCFD-4B06-94EE-6FA81D8E444E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D3F3B61-FCFD-4B06-94EE-6FA81D8E444E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D3F3B61-FCFD-4B06-94EE-6FA81D8E444E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14CD9BFD-8784-4CF9-B212-6FAE68E81DFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14CD9BFD-8784-4CF9-B212-6FAE68E81DFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14CD9BFD-8784-4CF9-B212-6FAE68E81DFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14CD9BFD-8784-4CF9-B212-6FAE68E81DFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30047B3A-3F23-4C5F-A8A8-076043A43B92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30047B3A-3F23-4C5F-A8A8-076043A43B92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30047B3A-3F23-4C5F-A8A8-076043A43B92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30047B3A-3F23-4C5F-A8A8-076043A43B92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2158812E-856E-49B2-89FE-DA7F1E099C49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2158812E-856E-49B2-89FE-DA7F1E099C49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2158812E-856E-49B2-89FE-DA7F1E099C49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2158812E-856E-49B2-89FE-DA7F1E099C49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{90074C60-3E94-41BC-8C48-CA4EFAE76B1F} = {8B5B87A5-D495-4D11-AC01-028B3F024071}
+		{14CD9BFD-8784-4CF9-B212-6FAE68E81DFD} = {90074C60-3E94-41BC-8C48-CA4EFAE76B1F}
+		{30047B3A-3F23-4C5F-A8A8-076043A43B92} = {90074C60-3E94-41BC-8C48-CA4EFAE76B1F}
+		{2158812E-856E-49B2-89FE-DA7F1E099C49} = {90074C60-3E94-41BC-8C48-CA4EFAE76B1F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5392DE2A-81FB-4D3D-9AA7-61B2AA2636B9}
