@@ -28,6 +28,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppModules.Core", "src\Othe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppModules.ConsoleApp", "src\OtherThemes\AssembliesAndProjectSigning\AppModules.ConsoleApp\AppModules.ConsoleApp.csproj", "{2158812E-856E-49B2-89FE-DA7F1E099C49}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Patterns", "Patterns", "{9A08111E-DDC3-45C6-8F5F-A583B5ABCC0B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatternsApp", "src\OtherThemes\Patterns\PatternsApp\PatternsApp.csproj", "{58130F9F-7D9B-439D-9038-75830EBE7BF5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +66,10 @@ Global
 		{2158812E-856E-49B2-89FE-DA7F1E099C49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2158812E-856E-49B2-89FE-DA7F1E099C49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2158812E-856E-49B2-89FE-DA7F1E099C49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58130F9F-7D9B-439D-9038-75830EBE7BF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58130F9F-7D9B-439D-9038-75830EBE7BF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58130F9F-7D9B-439D-9038-75830EBE7BF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58130F9F-7D9B-439D-9038-75830EBE7BF5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -71,6 +79,8 @@ Global
 		{14CD9BFD-8784-4CF9-B212-6FAE68E81DFD} = {90074C60-3E94-41BC-8C48-CA4EFAE76B1F}
 		{30047B3A-3F23-4C5F-A8A8-076043A43B92} = {90074C60-3E94-41BC-8C48-CA4EFAE76B1F}
 		{2158812E-856E-49B2-89FE-DA7F1E099C49} = {90074C60-3E94-41BC-8C48-CA4EFAE76B1F}
+		{9A08111E-DDC3-45C6-8F5F-A583B5ABCC0B} = {8B5B87A5-D495-4D11-AC01-028B3F024071}
+		{58130F9F-7D9B-439D-9038-75830EBE7BF5} = {9A08111E-DDC3-45C6-8F5F-A583B5ABCC0B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5392DE2A-81FB-4D3D-9AA7-61B2AA2636B9}
