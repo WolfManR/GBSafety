@@ -1,9 +1,87 @@
 ﻿@page "/"
+@using PatternsApp.Models
 
-<PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
+<div>
+	<div class="chats">
+		<div class="active-chat">
 
-Welcome to your new app.
+		</div>
+		
+		<div class="chats-list">
+			@foreach (ChatInfo info in ChatsInfo.Chats)
+			{
+				<button @onclick="() => SelectChat(info)">@info.Name[..24]</button>
+			}
+		</div>
+	</div>
+	<div class="current-chat">
+		@if (CurrentChatInfo is not null && CurrentChat is not null)
+		{
+			<div class="chat-header">
+				<div class="chat-name">@CurrentChatInfo.Name</div>
+				<button @onclick="CloseCurrentChat">X</button>
+			</div>
+		
+			<div class="messages">
+				@foreach (UserMessage message in CurrentChat!.Messages)
+				{
+					@if (message.UserId == UserId)
+					{
+						<div class="current-user-message">
+							<p>@message.Text</p>
+						</div>
+						continue;
+					}
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+					var user = GetUser(message.UserId);
+					<div class="user-message" style="background: @user.Color">
+						<div class="username">
+							<p>@user.Nick</p>
+						</div>
+						<p>@message.Text</p>
+					</div>
+				}
+			</div>
+
+			<div>
+				<textarea @bind-value="Message" @bind-value:event="oninput" placeholder="Enter your message here"></textarea>
+				<button @onclick="SubmitMessage">Submit</button>
+			</div>
+		}
+	</div>
+</div>
+
+@code
+{
+	public Guid UserId { get; set; }
+	public ChatsInfo ChatsInfo { get; set; }
+	public ChatInfo? CurrentChatInfo { get; set; }
+	public Chat? CurrentChat { get; set; }
+
+	public string Message { get; set; }
+	public static User UnknownUser = new User(){Color = "#fff", Nick = "Noname" } ;
+
+
+	private void SelectChat(ChatInfo chatInfo)
+	{
+		
+	}
+
+	private void CloseCurrentChat()
+	{
+		CurrentChatInfo = null;
+		CurrentChat = null;
+	}
+
+	private void SubmitMessage()
+	{
+		
+	}
+
+	private User? GetUser(Guid id)
+	{
+		if (CurrentChat is null || !CurrentChat.TryFindUser(id, out var user)) return UnknownUser;
+		return user;
+	} 
+}
