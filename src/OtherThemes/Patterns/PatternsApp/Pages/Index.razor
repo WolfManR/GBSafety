@@ -1,16 +1,25 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.SignalR.Client
+@implements IAsyncDisposable
 
 <div>
+	<div>
+		Login : <input type="text" @bind="Login"/><br/>
+		<button @onclick="Authenticate">Auth</button>
+	</div>
 	<div class="chats">
 		<div class="active-chat">
-
 		</div>
-		
+
 		<div class="chats-list">
-			@foreach (ChatInfo info in ChatsInfo.Chats)
+			@if (ChatsInfo is not null)
 			{
-				<button @onclick="() => SelectChat(info)">@info.Name[..24]</button>
+				@foreach (ChatInfo info in ChatsInfo.Chats)
+				{
+					<button @onclick="() => SelectChat(info)">@info.Name[..24]</button>
+				}
 			}
+
 		</div>
 	</div>
 	<div class="current-chat">
@@ -20,7 +29,7 @@
 				<div class="chat-name">@CurrentChatInfo.Name</div>
 				<button @onclick="CloseCurrentChat">X</button>
 			</div>
-		
+
 			<div class="messages">
 				@foreach (UserMessage message in CurrentChat!.Messages)
 				{
@@ -44,7 +53,7 @@
 
 			<div>
 				<textarea @bind-value="Message" @bind-value:event="oninput" placeholder="Enter your message here"></textarea>
-				<button @onclick="SubmitMessage">Submit</button>
+				<button @onclick="SubmitMessage" disabled="@(!IsConnected)">Submit</button>
 			</div>
 		}
 	</div>
@@ -52,18 +61,40 @@
 
 @code
 {
-	public Guid UserId { get; set; }
-	public ChatsInfo ChatsInfo { get; set; }
+	private HubConnection? hubConnection;
+
+	public bool IsConnected => hubConnection?.State == HubConnectionState.Connected;
+
+	public string UserId { get; set; }
+	public ChatsInfo? ChatsInfo { get; set; }
 	public ChatInfo? CurrentChatInfo { get; set; }
 	public Chat? CurrentChat { get; set; }
 
 	public string Message { get; set; }
-	public static User UnknownUser = new User(){Color = "#fff", Nick = "Noname" } ;
+	public static User UnknownUser = new User() { Color = "#fff", Nick = "Noname" };
 
+	public bool IsAuthorized { get; set; }
+	public string Login { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		hubConnection = new HubConnectionBuilder()
+			.WithUrl("http://localhost:5014/chathub")
+			.Build();
+
+		hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+		{
+			var encodedMsg = $"{user}: {message}";
+			CurrentChat.Messages.Add(new UserMessage(){Text = encodedMsg, UserId = user});
+			StateHasChanged();
+		});
+
+		await hubConnection.StartAsync();
+	}
 
 	private void SelectChat(ChatInfo chatInfo)
 	{
-		
+
 	}
 
 	private void CloseCurrentChat()
@@ -72,14 +103,30 @@
 		CurrentChat = null;
 	}
 
-	private void SubmitMessage()
+	private async Task SubmitMessage()
 	{
-		
+		if (hubConnection is not null)
+		{
+			await hubConnection.SendAsync("SendMessage", UserId, Message);
+		}
 	}
 
-	private User? GetUser(Guid id)
+	private User? GetUser(string id)
 	{
 		if (CurrentChat is null || !CurrentChat.TryFindUser(id, out var user)) return UnknownUser;
 		return user;
-	} 
+	}
+
+
+	public async ValueTask DisposeAsync()
+	{
+		if (hubConnection is null) return;
+
+		await hubConnection.DisposeAsync();
+	}
+
+	private void Authenticate()
+	{
+
+	}
 }
