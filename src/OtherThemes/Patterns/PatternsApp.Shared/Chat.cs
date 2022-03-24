@@ -9,7 +9,7 @@ public class Chat
     public User[] Users { get; set; }
     public List<UserMessage> Messages { get; set; }
 
-    public bool TryFindUser(Guid id,[NotNullWhen(true)] out User? user)
+    public bool TryFindUser(string id,[NotNullWhen(true)] out User? user)
     {
         user = null;
         if (Users.FirstOrDefault(u => u.UserId == id) is not { } found) return false;

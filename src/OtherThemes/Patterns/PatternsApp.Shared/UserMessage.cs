@@ -2,7 +2,8 @@
 
 public class UserMessage
 {
-    public Guid UserId { get; set; }
+    public string UserId { get; set; }
+    public Guid ChatRoomId { get; set; }
     public Guid MessageId { get; set; }
     public string Text { get; set; }
 }
