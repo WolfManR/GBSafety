@@ -29,6 +29,12 @@ public class CardsDapperDbContext : IAsyncDisposable
         }
     }
 
+    public CardsDapperDbContext(string connectionString)
+    {
+        _connection = new NpgsqlConnection(connectionString);
+        _connection.Open();
+    }
+
     public IDbConnection Connection
     {
         get

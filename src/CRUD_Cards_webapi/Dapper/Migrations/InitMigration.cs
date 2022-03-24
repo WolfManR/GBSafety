@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using FluentMigrator.Postgres;
 
 namespace CRUD_Cards_webapi.Dapper.Migrations;
 

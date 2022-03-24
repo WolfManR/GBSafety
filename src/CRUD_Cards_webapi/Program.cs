@@ -1,13 +1,17 @@
 using CRUD_Cards_webapi.Dapper;
-using CRUD_Cards_webapi.Dapper.Migrations;
 using CRUD_Cards_webapi.EF;
 using CRUD_Cards_webapi.Models;
 using CRUD_Cards_webapi.Services;
 using CRUD_Cards_webapi.Validations;
+
+using FluentMigrator.Runner;
+
 using FluentValidation;
 using FluentValidation.AspNetCore;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 using Thundire.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,19 +20,41 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<CardsDbContext>((p, o) => o.UseNpgsql(p.GetRequiredService<IConfiguration>().GetConnectionString("PostgreeEF")));
+builder.Services.AddDbContext<CardsDbContext>((p, o) => o
+    .UseNpgsql(p
+        .GetRequiredService<IConfiguration>()
+        .GetConnectionStringBuilder("EF")
+        .BuildWithDatabase()));
 
 builder.Services
-    .AddScoped<InitMigration>()
+    //.AddScoped<InitMigration>()
+    //.AddScoped<CardsDapperDbContext>(provider =>
+    //{
+    //    var configuration = provider.GetRequiredService<IConfiguration>();
+    //    var connectionString = configuration.GetConnectionString("PostgreeDapper");
+    //    var database = configuration.GetValue<string>("DapperDatabase");
+    //    return new CardsDapperDbContext(connectionString, database);
+    //})
     .AddScoped<CardsDapperDbContext>(provider =>
     {
         var configuration = provider.GetRequiredService<IConfiguration>();
-        var connectionString = configuration.GetConnectionString("PostgreeDapper");
-        var database = configuration.GetValue<string>("DapperDatabase");
-        return new CardsDapperDbContext(connectionString, database);
+        var connectionString = configuration.GetConnectionStringBuilder("Dapper");
+        return new CardsDapperDbContext(connectionString.BuildWithoutDatabase(), connectionString.Database);
     })
     .AddScoped<DapperDebetCardsRepository>()
     .AddScoped<DapperDebetCardsService>();
+
+builder.Services
+    .AddFluentMigratorCore()
+    .ConfigureRunner(c => c
+        .AddPostgres()
+        .WithGlobalConnectionString(provider =>
+        {
+            var configuration = provider.GetRequiredService<IConfiguration>();
+            var connectionString = configuration.GetConnectionStringBuilder("Dapper").BuildWithDatabase();
+            return connectionString;
+        })
+        .ScanIn(typeof(Program).Assembly).For.Migrations());
 
 builder.Services
     .AddScoped<EFCoreDebetCardsRepository>()
@@ -44,8 +70,13 @@ await using (var scope = app.Services.CreateAsyncScope())
     await using var context = scope.ServiceProvider.GetRequiredService<CardsDbContext>();
     await context.Database.MigrateAsync();
 
-    var dapperInitMigration = scope.ServiceProvider.GetRequiredService<InitMigration>();
-    await dapperInitMigration.Up();
+    await using (var dapperContext = scope.ServiceProvider.GetRequiredService<CardsDapperDbContext>())
+    {
+        await dapperContext.DisposeAsync();
+    }
+
+    var dapperMigration = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
+    dapperMigration.MigrateUp();
 }
 
 // Configure the HTTP request pipeline.
