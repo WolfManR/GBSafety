@@ -14,6 +14,9 @@ using Microsoft.EntityFrameworkCore;
 
 using Thundire.Helpers;
 
+const string EFCoreApiGroup = "EF";
+const string DapperApiGroup = "DAPPER";
+
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -27,14 +30,6 @@ builder.Services.AddDbContext<CardsDbContext>((p, o) => o
         .BuildWithDatabase()));
 
 builder.Services
-    //.AddScoped<InitMigration>()
-    //.AddScoped<CardsDapperDbContext>(provider =>
-    //{
-    //    var configuration = provider.GetRequiredService<IConfiguration>();
-    //    var connectionString = configuration.GetConnectionString("PostgreeDapper");
-    //    var database = configuration.GetValue<string>("DapperDatabase");
-    //    return new CardsDapperDbContext(connectionString, database);
-    //})
     .AddScoped<CardsDapperDbContext>(provider =>
     {
         var configuration = provider.GetRequiredService<IConfiguration>();
@@ -90,7 +85,7 @@ app.MapGet("debet", static async (EFCoreDebetCardsService debetCardsService) =>
 {
     var data = await debetCardsService.Get();
     return Results.Ok(data);
-});
+}).WithTags(EFCoreApiGroup);
 
 app.MapGet("debet/{id}", static async ([FromRoute] int id, EFCoreDebetCardsService debetCardsService) =>
 {
@@ -107,14 +102,14 @@ app.MapGet("debet/{id}", static async ([FromRoute] int id, EFCoreDebetCardsServi
     }
 
     return Results.Ok(successResult.CallBackData);
-});
+}).WithTags(EFCoreApiGroup);
 
 app.MapDelete("debet/{id}", static async ([FromRoute] int id, EFCoreDebetCardsService debetCardsService) =>
 {
     if (id <= 0) return Results.BadRequest("id cannot be lower 1");
     await debetCardsService.Delete(id);
     return Results.Ok();
-});
+}).WithTags(EFCoreApiGroup);
 
 app.MapPut("debet/{id}", static async ([FromRoute] int id, [FromBody] UpdateDebetCardRequest request, EFCoreDebetCardsService debetCardsService, IValidator<DebetCardBase> validation) =>
 {
@@ -126,7 +121,7 @@ app.MapPut("debet/{id}", static async ([FromRoute] int id, [FromBody] UpdateDebe
     var result = await debetCardsService.Update(id, request);
 
     return !result.IsSuccess ? Results.NotFound() : Results.Ok();
-});
+}).WithTags(EFCoreApiGroup);
 
 app.MapPost("debet", static async ([FromBody] CreateDebetCardRequest request, EFCoreDebetCardsService debetCardsService, IValidator<DebetCardBase> validation) =>
 {
@@ -141,14 +136,14 @@ app.MapPost("debet", static async ([FromBody] CreateDebetCardRequest request, EF
     }
 
     return Results.BadRequest();
-});
+}).WithTags(EFCoreApiGroup);
 
 
 app.MapGet("dapper/debet", static async (DapperDebetCardsService debetCardsService) =>
 {
     var data = await debetCardsService.Get();
     return Results.Ok(data);
-});
+}).WithTags(DapperApiGroup);
 
 app.MapGet("dapper/debet/{id}", static async ([FromRoute] int id, DapperDebetCardsService debetCardsService) =>
 {
@@ -165,14 +160,14 @@ app.MapGet("dapper/debet/{id}", static async ([FromRoute] int id, DapperDebetCar
     }
 
     return Results.Ok(successResult.CallBackData);
-});
+}).WithTags(DapperApiGroup);
 
 app.MapDelete("dapper/debet/{id}", static async ([FromRoute] int id, DapperDebetCardsService debetCardsService) =>
 {
     if (id <= 0) return Results.BadRequest("id cannot be lower 1");
     await debetCardsService.Delete(id);
     return Results.Ok();
-});
+}).WithTags(DapperApiGroup);
 
 app.MapPut("dapper/debet/{id}", static async ([FromRoute] int id, [FromBody] UpdateDebetCardRequest request, DapperDebetCardsService debetCardsService, IValidator<DebetCardBase> validation) =>
 {
@@ -184,7 +179,7 @@ app.MapPut("dapper/debet/{id}", static async ([FromRoute] int id, [FromBody] Upd
     var result = await debetCardsService.Update(id, request);
 
     return !result.IsSuccess ? Results.NotFound() : Results.Ok();
-});
+}).WithTags(DapperApiGroup);
 
 app.MapPost("dapper/debet", static async ([FromBody] CreateDebetCardRequest request, DapperDebetCardsService debetCardsService, IValidator<DebetCardBase> validation) =>
 {
@@ -199,6 +194,6 @@ app.MapPost("dapper/debet", static async ([FromBody] CreateDebetCardRequest requ
     }
 
     return Results.BadRequest();
-});
+}).WithTags(DapperApiGroup);
 
 app.Run();
