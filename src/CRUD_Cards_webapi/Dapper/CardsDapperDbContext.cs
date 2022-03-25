@@ -1,7 +1,6 @@
 ﻿using Npgsql;
 
 using System.Data;
-using Dapper;
 
 namespace CRUD_Cards_webapi.Dapper;
 
@@ -27,12 +26,6 @@ public class CardsDapperDbContext : IAsyncDisposable
             command.ExecuteNonQuery();
             _connection.ChangeDatabase(database);
         }
-    }
-
-    public CardsDapperDbContext(string connectionString)
-    {
-        _connection = new NpgsqlConnection(connectionString);
-        _connection.Open();
     }
 
     public IDbConnection Connection

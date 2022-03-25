@@ -2,7 +2,7 @@
 
 namespace CRUD_Cards_webapi.Models;
 
-public class ConnectionString
+public sealed class ConnectionString
 {
     public string Host { get; init; }
     public int Port { get; init; }
