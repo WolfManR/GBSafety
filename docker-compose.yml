@@ -7,9 +7,17 @@ services:
       context: .
       dockerfile: src/CRUD_Cards_webapi/Dockerfile
     environment:
-       ConnectionStrings__PostgreeEF: ${POSTGREEEFCORE};
-       ConnectionStrings__PostgreeDapper: ${POSGREEDAPPER};
-       DapperDatabase: ${POSTGREEDAPPERCARDSDB};
+       ConnectionStrings__EF__Host: ${CARDSDATABASEEFCOREHOST};
+       ConnectionStrings__EF__Port: ${POSTGRESOUTPORT};
+       ConnectionStrings__EF__Database: ${CARDSDATABASEEFCORENAME};
+       ConnectionStrings__EF__UserId: ${POSTGRESUSER};
+       ConnectionStrings__EF__Password: ${POSTGRESPASSWORD};
+
+       ConnectionStrings__Dapper__Host: ${CARDSDATABASEDAPPERHOST};
+       ConnectionStrings__Dapper__Port: ${POSTGRESOUTPORT};
+       ConnectionStrings__Dapper__Database: ${CARDSDATABASEDAPPERNAME};
+       ConnectionStrings__Dapper__UserId: ${POSTGRESUSER};
+       ConnectionStrings__Dapper__Password: ${POSTGRESPASSWORD};
     ports:
     - ${CRUDCARDSAPIOUTPUTPORT}:80
     depends_on:
@@ -21,7 +29,8 @@ services:
       context: .
       dockerfile: src/Identity_Server/Dockerfile
     environment:
-       ConnectionStrings__Identity: ${POSTGREEIDENTITYEFCORE};
+       ConnectionStrings__Identity: ${POSTGRESIDENTITYEFCORE};
+
        JwtSettings__SecureCode: ${IDENTITYSECURECODE}
        JwtSettings__ValidAudience: crud_cards_webapi
        JwtSettings__ValidIssuer: identity_server
@@ -35,10 +44,10 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_PASSWORD: ${POSTGREEUSER}
-      POSTGRES_USER: ${POSTGREEPASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRESUSER}
+      POSTGRES_USER: ${POSTGRESPASSWORD}
     ports:
-    - ${POSTGREEIDENTITYOUTPORT}:5432
+    - ${POSTGRESIDENTITYOUTPORT}:5432
     volumes:
     - ./tarxosgbsafetydata:/var/lib/postgresql/identitydata
 
@@ -46,10 +55,10 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_PASSWORD: ${POSTGREEUSER}
-      POSTGRES_USER: ${POSTGREEPASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRESUSER}
+      POSTGRES_USER: ${POSTGRESPASSWORD}
     ports:
-    - ${POSTGREEOUTPORT}:5432
+    - ${POSTGRESOUTPORT}:5432
     volumes:
     - ./tarxosgbsafetydata:/var/lib/postgresql/data
 
