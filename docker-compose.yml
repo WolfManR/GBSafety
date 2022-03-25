@@ -23,33 +23,51 @@ services:
     depends_on:
       - db
 
-  identity_server:
-    image: ${DOCKER_REGISTRY-}identityserver
-    build:
-      context: .
-      dockerfile: src/Identity_Server/Dockerfile
-    environment:
-       ConnectionStrings__Identity: ${POSTGRESIDENTITYEFCORE};
+  #identity_server:
+  #  image: ${DOCKER_REGISTRY-}identityserver
+  #  build:
+  #    context: .
+  #    dockerfile: src/Identity_Server/Dockerfile
+  #  environment:
+  #     ConnectionStrings__Identity: ${POSTGRESIDENTITYEFCORE};
 
-       JwtSettings__SecureCode: ${IDENTITYSECURECODE}
-       JwtSettings__ValidAudience: crud_cards_webapi
-       JwtSettings__ValidIssuer: identity_server
-    ports:
-    - ${IDENTITYSERVEROUTPUTPORT}:80
-    depends_on:
-      - identitydb
+  #     JwtSettings__SecureCode: ${IDENTITYSECURECODE}
+  #     JwtSettings__ValidAudience: crud_cards_webapi
+  #     JwtSettings__ValidIssuer: identity_server
+  #  ports:
+  #  - ${IDENTITYSERVEROUTPUTPORT}:80
+  #  depends_on:
+  #    - identitydb
      
 
-  identitydb:
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: ${POSTGRESUSER}
-      POSTGRES_USER: ${POSTGRESPASSWORD}
-    ports:
-    - ${POSTGRESIDENTITYOUTPORT}:5432
+#  identitydb:
+#    image: postgres
+#    restart: always
+#    environment:
+#      POSTGRES_PASSWORD: ${POSTGRESUSER}
+#      POSTGRES_USER: ${POSTGRESPASSWORD}
+#    ports:
+#    - ${POSTGRESIDENTITYOUTPORT}:5432
+#    volumes:
+#    - ./tarxosgbsafetydata:/var/lib/postgresql/identitydata
+
+  prometheus:
+    image: prom/prometheus:latest
     volumes:
-    - ./tarxosgbsafetydata:/var/lib/postgresql/identitydata
+      - ./prometheus-grafana/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+      
+      
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - ./prometheus-grafana/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./prometheus-grafana/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yaml
+    ports:
+      - 3000:3000
+    links:
+      - prometheus
 
   db:
     image: postgres

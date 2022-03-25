@@ -32,9 +32,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Patterns", "Patterns", "{9A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PatternsApp", "src\OtherThemes\Patterns\PatternsApp\PatternsApp.csproj", "{58130F9F-7D9B-439D-9038-75830EBE7BF5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatternsApp.Server", "src\OtherThemes\Patterns\PatternsApp.Server\PatternsApp.Server.csproj", "{318FF33A-3E3A-4671-97A5-3D665C1CE8D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PatternsApp.Server", "src\OtherThemes\Patterns\PatternsApp.Server\PatternsApp.Server.csproj", "{318FF33A-3E3A-4671-97A5-3D665C1CE8D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatternsApp.Shared", "src\OtherThemes\Patterns\PatternsApp.Shared\PatternsApp.Shared.csproj", "{5DD4C1F6-9603-473B-8D74-52AADE814D9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PatternsApp.Shared", "src\OtherThemes\Patterns\PatternsApp.Shared\PatternsApp.Shared.csproj", "{5DD4C1F6-9603-473B-8D74-52AADE814D9C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Metrics", "Metrics", "{3F244100-9D57-4278-A0F6-BE2429175FFE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Prometheus", "Prometheus", "{97C1784F-2D61-4AFD-8835-47BCC3E750D5}"
+	ProjectSection(SolutionItems) = preProject
+		prometheus-grafana\prometheus\prometheus.yml = prometheus-grafana\prometheus\prometheus.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Grafana", "Grafana", "{45267CB2-6F3B-4750-81DF-40390E4331B7}"
+	ProjectSection(SolutionItems) = preProject
+		prometheus-grafana\grafana\datasource.yml = prometheus-grafana\grafana\datasource.yml
+		prometheus-grafana\grafana\grafana.ini = prometheus-grafana\grafana\grafana.ini
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -95,6 +108,8 @@ Global
 		{58130F9F-7D9B-439D-9038-75830EBE7BF5} = {9A08111E-DDC3-45C6-8F5F-A583B5ABCC0B}
 		{318FF33A-3E3A-4671-97A5-3D665C1CE8D9} = {9A08111E-DDC3-45C6-8F5F-A583B5ABCC0B}
 		{5DD4C1F6-9603-473B-8D74-52AADE814D9C} = {9A08111E-DDC3-45C6-8F5F-A583B5ABCC0B}
+		{97C1784F-2D61-4AFD-8835-47BCC3E750D5} = {3F244100-9D57-4278-A0F6-BE2429175FFE}
+		{45267CB2-6F3B-4750-81DF-40390E4331B7} = {3F244100-9D57-4278-A0F6-BE2429175FFE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5392DE2A-81FB-4D3D-9AA7-61B2AA2636B9}
