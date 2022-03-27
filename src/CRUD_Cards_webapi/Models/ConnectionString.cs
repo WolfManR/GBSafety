@@ -5,7 +5,7 @@ namespace CRUD_Cards_webapi.Models;
 public sealed class ConnectionString
 {
     public string Host { get; init; }
-    public int Port { get; init; }
+    public int Port { get; init; } = -1;
     public string Database { get; init; }
     public string UserId { get; init; }
     public string Password { get; init; }
@@ -17,8 +17,8 @@ public sealed class ConnectionString
     {
         StringBuilder sb = new ();
 
-        sb.Append($"Host={Host};");
-        sb.Append($"Port={Port};");
+        sb.Append($"Server={Host};");
+        //if(Port != -1) sb.Append($"Port={Port};");
         if(includeDatabase) sb.Append($"Database={Database};");
         sb.Append($"User Id={UserId};");
         sb.Append($"Password={Password};");

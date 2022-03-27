@@ -7,37 +7,35 @@ services:
       context: .
       dockerfile: src/CRUD_Cards_webapi/Dockerfile
     environment:
-       ConnectionStrings__EF__Host: ${CARDSDATABASEEFCOREHOST};
-       ConnectionStrings__EF__Port: ${POSTGRESOUTPORT};
-       ConnectionStrings__EF__Database: ${CARDSDATABASEEFCORENAME};
-       ConnectionStrings__EF__UserId: ${POSTGRESUSER};
-       ConnectionStrings__EF__Password: ${POSTGRESPASSWORD};
+       ConnectionStrings__EF__Host: db
+       ConnectionStrings__EF__Database: DebetCardsEF
+       ConnectionStrings__EF__UserId: ${POSTGRESUSER}
+       ConnectionStrings__EF__Password: ${POSTGRESPASSWORD}
 
-       ConnectionStrings__Dapper__Host: ${CARDSDATABASEDAPPERHOST};
-       ConnectionStrings__Dapper__Port: ${POSTGRESOUTPORT};
-       ConnectionStrings__Dapper__Database: ${CARDSDATABASEDAPPERNAME};
-       ConnectionStrings__Dapper__UserId: ${POSTGRESUSER};
-       ConnectionStrings__Dapper__Password: ${POSTGRESPASSWORD};
+       ConnectionStrings__Dapper__Host: db
+       ConnectionStrings__Dapper__Database: DebetCardsDapper
+       ConnectionStrings__Dapper__UserId: ${POSTGRESUSER}
+       ConnectionStrings__Dapper__Password: ${POSTGRESPASSWORD}
     ports:
-    - ${CRUDCARDSAPIOUTPUTPORT}:80
+      - 5684:80
     depends_on:
       - db
 
-  #identity_server:
-  #  image: ${DOCKER_REGISTRY-}identityserver
-  #  build:
-  #    context: .
-  #    dockerfile: src/Identity_Server/Dockerfile
-  #  environment:
-  #     ConnectionStrings__Identity: ${POSTGRESIDENTITYEFCORE};
-
-  #     JwtSettings__SecureCode: ${IDENTITYSECURECODE}
-  #     JwtSettings__ValidAudience: crud_cards_webapi
-  #     JwtSettings__ValidIssuer: identity_server
-  #  ports:
-  #  - ${IDENTITYSERVEROUTPUTPORT}:80
-  #  depends_on:
-  #    - identitydb
+#  identity_server:
+#    image: ${DOCKER_REGISTRY-}identityserver
+#    build:
+#      context: .
+#      dockerfile: src/Identity_Server/Dockerfile
+#    environment:
+#       ConnectionStrings__Identity: ${POSTGRESIDENTITYEFCORE};
+   
+#       JwtSettings__SecureCode: ${IDENTITYSECURECODE}
+#       JwtSettings__ValidAudience: crud_cards_webapi
+#       JwtSettings__ValidIssuer: identity_server
+#    ports:
+#      - 5685:80
+#    depends_on:
+#      - identitydb
      
 
 #  identitydb:
@@ -73,12 +71,20 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_PASSWORD: ${POSTGRESUSER}
-      POSTGRES_USER: ${POSTGRESPASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRESPASSWORD}
+      POSTGRES_USER: ${POSTGRESUSER}
     ports:
-    - ${POSTGRESOUTPORT}:5432
+      - 5682:5432
     volumes:
-    - ./tarxosgbsafetydata:/var/lib/postgresql/data
+      - ./tarxosgbsafetydata:/var/lib/postgresql/data
 
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8735:8080
 volumes:
   tarxosgbsafetydata:
+
+networks:
+  database:

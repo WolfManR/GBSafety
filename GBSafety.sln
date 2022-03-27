@@ -45,6 +45,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Prometheus", "Prometheus", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Grafana", "Grafana", "{45267CB2-6F3B-4750-81DF-40390E4331B7}"
 	ProjectSection(SolutionItems) = preProject
+		Dashboard.Template.json = Dashboard.Template.json
 		prometheus-grafana\grafana\datasource.yml = prometheus-grafana\grafana\datasource.yml
 		prometheus-grafana\grafana\grafana.ini = prometheus-grafana\grafana\grafana.ini
 	EndProjectSection

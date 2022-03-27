@@ -26,11 +26,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<CardsDbContext>((p, o) => o
-    .UseNpgsql(p
-        .GetRequiredService<IConfiguration>()
-        .GetConnectionStringBuilder("EF")
-        .BuildWithDatabase()));
+builder.Services.AddDbContext<CardsDbContext>((p, o) =>
+{
+    var configuration = p.GetRequiredService<IConfiguration>();
+    var connectionString = configuration.GetConnectionStringBuilder("EF").BuildWithDatabase();
+    o.UseNpgsql(connectionString);
+});
 
 builder.Services
     .AddScoped<CardsDapperDbContext>(provider =>
@@ -81,16 +82,26 @@ var app = builder.Build();
 
 await using (var scope = app.Services.CreateAsyncScope())
 {
-    await using var context = scope.ServiceProvider.GetRequiredService<CardsDbContext>();
-    await context.Database.MigrateAsync();
-
-    await using (var dapperContext = scope.ServiceProvider.GetRequiredService<CardsDapperDbContext>())
+    try
     {
-        await dapperContext.DisposeAsync();
-    }
+        await using var context = scope.ServiceProvider.GetRequiredService<CardsDbContext>();
+        await context.Database.MigrateAsync();
 
-    var dapperMigration = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
-    dapperMigration.MigrateUp();
+        await using (var dapperContext = scope.ServiceProvider.GetRequiredService<CardsDapperDbContext>())
+        {
+            await dapperContext.DisposeAsync();
+        }
+
+        var dapperMigration = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
+        dapperMigration.MigrateUp();
+    }
+    catch (Exception ex)
+    {
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogCritical(ex, "Fail connect to databases");
+        Environment.Exit(-1);
+        return;
+    }
 }
 
 // Configure the HTTP request pipeline.
@@ -142,7 +153,11 @@ app.MapPut("debet/{id}", static async ([FromRoute] int id, [FromBody] UpdateDebe
     return !result.IsSuccess ? Results.NotFound() : Results.Ok();
 }).WithTags(EFCoreApiGroup);
 
-app.MapPost("debet", static async ([FromBody] CreateDebetCardRequest request, EFCoreDebetCardsService debetCardsService, IValidator<DebetCardBase> validation) =>
+app.MapPost("debet", static async (
+    [FromBody] CreateDebetCardRequest request,
+    EFCoreDebetCardsService debetCardsService,
+    IValidator<DebetCardBase> validation,
+    IMetrics metrics) =>
 {
     var validationResult = await validation.ValidateAsync(request);
     if (!validationResult.IsValid) return Results.BadRequest(validationResult.Errors);
@@ -151,6 +166,7 @@ app.MapPost("debet", static async ([FromBody] CreateDebetCardRequest request, EF
 
     if (result is SuccessResult<int> successResult)
     {
+        metrics.Measure.Counter.Increment(DapperMetricsRegistry.CreatedDebetCardsCounter);
         return Results.Ok(successResult.CallBackData);
     }
 
