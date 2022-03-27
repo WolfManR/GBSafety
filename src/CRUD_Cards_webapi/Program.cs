@@ -1,3 +1,6 @@
+using App.Metrics;
+using App.Metrics.AspNetCore;
+using App.Metrics.Formatters.Prometheus;
 using CRUD_Cards_webapi.Dapper;
 using CRUD_Cards_webapi.EF;
 using CRUD_Cards_webapi.Models;
@@ -57,6 +60,22 @@ builder.Services
 
 builder.Services.AddFluentValidation();
 builder.Services.AddScoped<IValidator<DebetCardBase>, DebetCardValidation>();
+
+builder.Services.AddMetrics(metricsBuilder =>
+{
+    metricsBuilder
+        .OutputMetrics.AsPrometheusPlainText()
+        .OutputMetrics.AsPrometheusProtobuf();
+});
+
+builder.Host
+    .UseMetricsWebTracking()
+    .UseMetrics(o => o.EndpointOptions = mo =>
+    {
+        mo.MetricsTextEndpointOutputFormatter = new MetricsPrometheusTextOutputFormatter();
+        mo.MetricsEndpointOutputFormatter = new MetricsPrometheusProtobufOutputFormatter();
+        mo.EnvironmentInfoEndpointEnabled = false;
+    });
 
 var app = builder.Build();
 
