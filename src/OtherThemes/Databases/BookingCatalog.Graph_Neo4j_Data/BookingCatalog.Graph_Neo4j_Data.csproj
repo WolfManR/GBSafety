@@ -10,4 +10,8 @@
     <PackageReference Include="Neo4j.Driver" Version="4.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BookingCatalog.Core\BookingCatalog.Core.csproj" />
+  </ItemGroup>
+
 </Project>
