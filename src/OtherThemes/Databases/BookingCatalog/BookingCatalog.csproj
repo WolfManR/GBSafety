@@ -10,4 +10,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BookingCatalog.Graph_Neo4j_Data\BookingCatalog.Graph_Neo4j_Data.csproj" />
+  </ItemGroup>
+
 </Project>
