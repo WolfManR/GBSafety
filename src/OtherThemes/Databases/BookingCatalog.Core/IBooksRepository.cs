@@ -2,7 +2,7 @@
 
 public interface IBooksRepository
 {
-    int CountStoredBooks(string bookTitle);
-    IAsyncEnumerable<Book> ListBooks(Author author);
-    Task<bool> Store(Book book, Author author, int count);
+    Task<long> CountStoredBooks(string bookTitle);
+    IAsyncEnumerable<BookInfo> ListBooks();
+    Task<bool> Store(Book book, Author author, long count);
 }

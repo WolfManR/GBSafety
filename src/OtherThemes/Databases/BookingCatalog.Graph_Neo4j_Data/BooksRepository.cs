@@ -13,13 +13,16 @@ public class BooksRepository : IBooksRepository
         _context = context;
     }
 
-
-    public int CountStoredBooks(string bookTitle)
+    public async Task<long> CountStoredBooks(string bookTitle)
     {
-        return 0;
+        await using var session = _context.AsyncSession();
+
+        var result = await session.ReadTransactionAsync(tx => CountOfStoredBooks(tx, bookTitle));
+
+        return result;
     }
 
-    public async IAsyncEnumerable<Book> ListBooks(Author author)
+    public async IAsyncEnumerable<BookInfo> ListBooks()
     {
         await using var session = _context.AsyncSession();
         
@@ -31,14 +34,22 @@ public class BooksRepository : IBooksRepository
         }
     }
 
-    public async Task<bool> Store(Book book, Author author, int amount)
+    public async Task<bool> Store(Book book, Author author, long amount)
     {
         await using var session = _context.AsyncSession();
 
         try
         {
-            var result1 = await session.WriteTransactionAsync(tx => AddBook(tx, book, author));
-            var result2 = await session.ReadTransactionAsync(tx => CheckThatBookStored(tx, book));
+            await session.WriteTransactionAsync(tx => AddBook(tx, book, author));
+            var (isStored, previousCount) = await session.ReadTransactionAsync(tx => CheckThatBookStored(tx, book));
+
+            if (isStored)
+            {
+                await session.WriteTransactionAsync(tx => UpdateCountOfStoredBooks(tx, book, previousCount + amount));
+                return true;
+            }
+
+            await session.WriteTransactionAsync(tx => AddBookToStorage(tx, book, amount));
 
             return true;
         }
@@ -76,9 +87,9 @@ public class BooksRepository : IBooksRepository
     private async Task<IResultSummary> AddBook(IAsyncTransaction transaction, Book book, Author author)
     {
         const string query = @"
-merge (b:Book { title: '$title' , description: '$description', pages: $pages })
-merge (a:Person:Author { firstName: '$firstName', lastName: '$lastName', age: $age })
-merge (a) <- [w:WRITE] - (b)
+merge (b:Book { title: $title , description: $description, pages: $pages })
+merge (a:Person:Author { firstName: $firstName, lastName: $lastName, age: $age })
+merge (a) - [w:WRITE] -> (b)
 ";
 
         var cursor = await transaction.RunAsync(query, new
@@ -94,15 +105,15 @@ merge (a) <- [w:WRITE] - (b)
 
         return await cursor.ConsumeAsync();
     }
-    private async Task<IResultSummary> CheckThatBookStored(IAsyncTransaction transaction, Book book)
+    private async Task<(bool, long)> CheckThatBookStored(IAsyncTransaction transaction, Book book)
     {
         const string query = @"
-match (a:Book { title: '$title' , description: '$description', pages: $pages })
+match (a:Book { title: $title , description: $description, pages: $pages })
 with a
 merge (s:Storage)
 with a, s
 optional match(s) - [st: Stored] - (a)
-return st,a
+return st.count as count
 ";
 
         var cursor = await transaction.RunAsync(query, new
@@ -112,12 +123,17 @@ return st,a
             pages = book.Pages
         });
 
-        return await cursor.ConsumeAsync();
+        if (!await cursor.FetchAsync()) return (false, default);
+
+        var storedBooksCount = cursor.Current["count"];
+        return storedBooksCount is null 
+            ? (false, default) 
+            : (true, storedBooksCount.As<long>());
     }
-    private async Task<IResultSummary> AddBookToStorage(IAsyncTransaction transaction, Book book, int amount)
+    private async Task<IResultSummary> AddBookToStorage(IAsyncTransaction transaction, Book book, long amount)
     {
         const string query = @"
-match (a:Book { title: '$title' , description: '$description', pages: $pages })
+match (a:Book { title: $title , description: $description, pages: $pages })
 match(s:Storage)
 create(s) <- [st: Stored {count: $amount}] - (a)
 ";
@@ -132,10 +148,10 @@ create(s) <- [st: Stored {count: $amount}] - (a)
 
         return await cursor.ConsumeAsync();
     }
-    private async Task<IResultSummary> UpdateCountOfStoredBooks(IAsyncTransaction transaction, Book book, int amount)
+    private async Task<IResultSummary> UpdateCountOfStoredBooks(IAsyncTransaction transaction, Book book, long amount)
     {
         const string query = @"
-match(s:Storage) <- [st: Stored] - (a:Book { title: '$title' , description: '$description', pages: $pages })
+match(s:Storage) <- [st: Stored] - (a:Book { title: $title , description: $description, pages: $pages })
 set st += {count: $amount}
 ";
 
@@ -150,17 +166,34 @@ set st += {count: $amount}
         return await cursor.ConsumeAsync();
     }
 
-    private async Task<IReadOnlyCollection<Book>> GetAllBooks(IAsyncTransaction transaction)
+    private async Task<IReadOnlyCollection<BookInfo>> GetAllBooks(IAsyncTransaction transaction)
     {
-        const string query = @"match (b:Book) return b";
+        const string query = @"
+match (b:Book) <- - (a:Author)
+return b.title as title, b.description as description, a.firstName as authorFirstName, a.lastName as authorLastName";
 
         var cursor = await transaction.RunAsync(query);
 
-        return await cursor.ToListAsync<Book>(record => new Book()
-            {
-                Title = record["title"].As<string>(),
-                Description = record["description"].As<string>(),
-                Pages = record["pages"].As<int>()
-            });
+        return await cursor.ToListAsync(record => new BookInfo()
+        {
+            Title = record["title"].As<string>(),
+            Description = record["description"].As<string>(),
+            AuthorFirstName = record["authorFirstName"].As<string>(),
+            AuthorLastName = record["authorLastName"].As<string>()
+        });
+    }
+    private async Task<long> CountOfStoredBooks(IAsyncTransaction transaction, string bookTitle)
+    {
+        const string query = @"
+match (a:Book { title: $title}) - [st:Stored] - (s:Storage)
+return st.count as count
+";
+
+        var cursor = await transaction.RunAsync(query, new { title = bookTitle });
+
+        if (!await cursor.FetchAsync()) return default;
+
+        var storedBooksCount = cursor.Current["count"];
+        return storedBooksCount?.As<long>() ?? default;
     }
 }

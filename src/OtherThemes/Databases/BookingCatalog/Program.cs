@@ -1,6 +1,7 @@
 using BookingCatalog.Core;
 using BookingCatalog.Graph_Neo4j_Data;
 using BookingCatalog.Graph_Neo4j_Data.Context;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapPost("books/store", StoreBooks);
+app.MapPost("books/count/{bookTitle}", CountStoredBooks);
+app.MapGet("books/all", ListStoredBooks);
 
 app.Run();
 
@@ -43,5 +46,27 @@ async Task<IResult> StoreBooks(StoreBooksRequest request, IBooksRepository books
    await booksRepository.Store(request.Book, request.Author, request.Amount);
    return Results.Ok();
 }
+async Task<IResult> CountStoredBooks([FromQuery]string bookTitle, IBooksRepository booksRepository)
+{
+   var count = await booksRepository.CountStoredBooks(bookTitle);
+   return Results.Ok(count);
+}
+async IAsyncEnumerable<StoredBooksResponse> ListStoredBooks(IBooksRepository booksRepository)
+{
+    StoredBooksResponse cache = new();
+    await foreach (var book in booksRepository.ListBooks())
+    {
+        cache.Title = book.Title;
+        cache.Description = book.Description;
+        cache.AuthorFullName = $"{book.AuthorFirstName} {book.AuthorLastName}";
+        yield return cache;
+    }
+}
 
 record StoreBooksRequest(Book Book, Author Author, int Amount);
+record StoredBooksResponse()
+{
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public string AuthorFullName { get; set; }
+}
