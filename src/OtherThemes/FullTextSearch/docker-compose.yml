@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  fulltextsearch.app:
+    image: ${DOCKER_REGISTRY-}fulltextsearchapp
+    build:
+      context: .
+      dockerfile: FullTextSearch.App/Dockerfile
