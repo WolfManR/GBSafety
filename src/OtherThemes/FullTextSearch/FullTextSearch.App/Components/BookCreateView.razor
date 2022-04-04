@@ -1,0 +1,32 @@
+﻿<div class="form-control">
+	<label>title</label>
+	<input type="text" @bind="Title"/>
+	<label>FirstName</label>
+	<input type="text" @bind="FirstName"/>
+	<label>LastName</label>
+	<input type="text" @bind="LastName"/>
+	<button @onclick="GenerateBookAndSendToParent">Add</button>
+</div>
+@code {
+	private string? Title { get; set; }
+	private string? FirstName { get; set; }
+	private string? LastName { get; set; }
+
+	[Parameter]
+	public EventCallback<Book> OnBookGenerated { get; set; }
+
+	private async Task GenerateBookAndSendToParent()
+	{
+		if(!OnBookGenerated.HasDelegate || Title is not {Length:>0} || FirstName is not {Length:>0} || LastName is not {Length:>0}) return;
+		Book book = new()
+		{
+			Title = Title,
+			Author = new()
+			{
+				FirstName = FirstName,
+				LastName = LastName
+			}
+		};
+		await OnBookGenerated.InvokeAsync(book);
+	}
+}
