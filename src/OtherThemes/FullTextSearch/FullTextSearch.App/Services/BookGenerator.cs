@@ -7,6 +7,7 @@ public class BookGenerator
 {
     private static Faker<Book> _generator = new Faker<Book>().Rules((f, b) =>
     {
+        b.Id = Guid.NewGuid().ToString();
         b.Title = f.Commerce.ProductName();
         b.Author = new Author()
         {

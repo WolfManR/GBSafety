@@ -20,6 +20,7 @@
 		if(!OnBookGenerated.HasDelegate || Title is not {Length:>0} || FirstName is not {Length:>0} || LastName is not {Length:>0}) return;
 		Book book = new()
 		{
+			Id = Guid.NewGuid().ToString(),
 			Title = Title,
 			Author = new()
 			{
