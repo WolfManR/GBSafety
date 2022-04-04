@@ -35,6 +35,24 @@ public class ElasticService
         var result = _client.IndexDocument(book);
     }
 
+    public async Task<IReadOnlyCollection<Book>> Search(string title = "")
+    {
+        var result = await _client.SearchAsync<Book>(d => d
+            .Query(q => q.Match(m => m.Field(b => b.Title).Query(title)))
+            .Size(100)       
+        );
+        return result.Documents;
+    }
+
+    public async Task<IReadOnlyCollection<Book>> LoadAll()
+    {
+        var result = await _client.SearchAsync<Book>(d => d
+            .Query(q => q.MatchAll())
+            .Size(100)       
+        );
+        return result.Documents;
+    }
+
     private void SetIndexes(ElasticConfiguration configuration)
     {
         _client.Indices.Create(configuration.Index, createDescriptor => createDescriptor.Map<Book>(map => map
