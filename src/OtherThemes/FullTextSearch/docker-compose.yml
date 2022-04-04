@@ -6,3 +6,26 @@ services:
     build:
       context: .
       dockerfile: FullTextSearch.App/Dockerfile
+
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.2
+    restart: always
+    volumes:
+      - elastic:/usr/share/elasticsearch/data
+    environment: 
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:7.17.2
+    restart: always
+    ports:
+      - 5601:5601
+    links:
+      - elasticsearch
+
+volumes:
+  elastic:
