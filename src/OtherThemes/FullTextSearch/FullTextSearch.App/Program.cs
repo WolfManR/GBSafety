@@ -8,8 +8,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
 builder.Services
-    .AddSingleton<BookGenerator>()
-    .AddScoped<BooksCatalog>();
+    .AddSingleton<BookGenerator>();
 
 var elasticConfiguration = builder.Configuration.GetSection("Elastic");
 
