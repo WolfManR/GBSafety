@@ -1,11 +1,17 @@
 ﻿<div class="form-control">
-	<label>title</label>
-	<input type="text" @bind="Title"/>
-	<label>FirstName</label>
-	<input type="text" @bind="FirstName"/>
-	<label>LastName</label>
-	<input type="text" @bind="LastName"/>
-	<button @onclick="GenerateBookAndSendToParent">Add</button>
+	<div>
+		<label>Title</label>
+		<input type="text" @bind="Title"/>
+	</div>
+	<div>
+		<label>FirstName</label>
+		<input type="text" @bind="FirstName"/>
+	</div>
+	<div>
+		<label>LastName</label>
+		<input type="text" @bind="LastName"/>
+	</div>
+	<button class="mt-2" @onclick="GenerateBookAndSendToParent">Add</button>
 </div>
 @code {
 	private string? Title { get; set; }
