@@ -4,7 +4,7 @@ namespace FullTextSearch.App.Services;
 
 public class BooksCatalog
 {
-    public static HashSet<Book> Books { get; set; }
+    public static HashSet<Book> Books { get; set; } = new();
 
     public void Add(Book book)
     {
