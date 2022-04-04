@@ -1,5 +1,6 @@
 ﻿@page "/"
 @inject BooksCatalog _catalog
+@inject ElasticService _elastic
 
 <PageTitle>Index</PageTitle>
 
@@ -27,6 +28,7 @@
 	private void AddBook(Book book)
 	{
 		_catalog.Add(book);
+		_elastic.IndexBook(book);
 		StateHasChanged();
 	}
 }
