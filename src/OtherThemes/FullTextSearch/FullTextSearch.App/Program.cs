@@ -1,3 +1,4 @@
+using FullTextSearch.App.Models;
 using FullTextSearch.App.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,12 @@ builder.Services.AddServerSideBlazor();
 builder.Services
     .AddSingleton<BookGenerator>()
     .AddScoped<BooksCatalog>();
+
+var elasticConfiguration = builder.Configuration.GetSection("Elastic");
+
+builder.Services
+    .Configure<ElasticConfiguration>(elasticConfiguration)
+    .AddScoped<ElasticService>();
 
 var app = builder.Build();
 

@@ -7,11 +7,15 @@ public static class Middlewares
         using var scope = app.ApplicationServices.CreateScope();
         var generate = scope.ServiceProvider.GetRequiredService<BookGenerator>();
         var catalog = scope.ServiceProvider.GetRequiredService<BooksCatalog>();
+        var indexer = scope.ServiceProvider.GetRequiredService<ElasticService>();
 
         foreach (var book in generate.InCount(24))
         {
             catalog.Add(book);
         }
+
+        indexer.IndexBooks(catalog.List());
+
         return app;
     }
 }
