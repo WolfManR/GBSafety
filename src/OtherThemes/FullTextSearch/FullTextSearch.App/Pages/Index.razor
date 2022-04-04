@@ -3,17 +3,30 @@
 
 <PageTitle>Index</PageTitle>
 
-<div style="height:500px;overflow-y:scroll">
+<BookCreateView OnBookGenerated="AddBook"/>
+
+<div class="card col-3">
+	<b>Books</b><span>Count: @Books.Count</span>
+</div>
+
+<div style="height:400px;overflow-y:scroll">
 	<Virtualize Items="@Books" Context="book">
 		<BookView Book="@book"/>
 	</Virtualize>
 </div>
 
 @code{
-	public List<Book> Books { get; set; }
+	public List<Book> Books { get; set; } = new();
 
-	protected override void OnInitialized()
+	protected override void OnAfterRender(bool firstRender)
 	{
-		Books = _catalog.List();
+		Books.Clear();
+		Books.AddRange(_catalog.List());
+	}
+
+	private void AddBook(Book book)
+	{
+		_catalog.Add(book);
+		StateHasChanged();
 	}
 }
