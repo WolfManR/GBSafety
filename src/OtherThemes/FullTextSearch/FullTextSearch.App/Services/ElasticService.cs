@@ -8,11 +8,11 @@ public class ElasticService
 {
     private readonly ElasticClient _client;
 
-    public ElasticService(IOptions<ElasticConfiguration> configuration)
+    public ElasticService(IOptions<ElasticConfiguration> options)
     {
-        var configuration1 = configuration.Value;
-        _client = new ElasticClient(BuildConnectionSetting(configuration1));
-        SetIndexes(configuration1);
+        var configuration = options.Value;
+        _client = new ElasticClient(BuildConnectionSetting(configuration));
+        SetIndexes(configuration);
     }
 
     public void IndexBooks(IReadOnlyCollection<Book> books)
