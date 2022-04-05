@@ -6,9 +6,12 @@ services:
     build:
       context: .
       dockerfile: FullTextSearch.App/Dockerfile
+    environment:
+      Elastic__Uri: http://host.docker.internal:9200
+      Elastic__Index: book
 
   elasticsearch:
-    container_name: elasticsearch
+    container_name: search
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.2
     restart: always
     volumes:
@@ -19,7 +22,7 @@ services:
       - 9200:9200
 
   kibana:
-    container_name: kibana
+    container_name: kib
     image: docker.elastic.co/kibana/kibana:7.17.2
     restart: always
     ports:
