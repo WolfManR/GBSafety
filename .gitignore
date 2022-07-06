@@ -4,3 +4,4 @@
 *.user.*
 /tarxosgbsafetydata
 /.env
+*.csproj.user
