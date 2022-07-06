@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  fulltextsearch.app:
+    image: ${DOCKER_REGISTRY-}fulltextsearchapp
+    build:
+      context: .
+      dockerfile: FullTextSearch.App/Dockerfile
+    environment:
+      Elastic__Uri: http://host.docker.internal:9200
+      Elastic__Index: book
+
+  elasticsearch:
+    container_name: search
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.2
+    restart: always
+    volumes:
+      - elastic:/usr/share/elasticsearch/data
+    environment: 
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+
+  kibana:
+    container_name: kib
+    image: docker.elastic.co/kibana/kibana:7.17.2
+    restart: always
+    ports:
+      - 5601:5601
+    links:
+      - elasticsearch
+
+volumes:
+  elastic:
