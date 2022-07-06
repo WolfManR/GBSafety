@@ -1,0 +1,17 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "crud_cards_webapi",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/swagger",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "crud_cards_webapi": "StartWithoutDebugging",
+        "db": "StartWithoutDebugging",
+        "grafana": "StartWithoutDebugging",
+        "prometheus": "StartWithoutDebugging"
+      }
+    }
+  }
+}

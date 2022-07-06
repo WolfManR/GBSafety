@@ -1,7 +1,6 @@
 ﻿using Npgsql;
 
 using System.Data;
-using Dapper;
 
 namespace CRUD_Cards_webapi.Dapper;
 
