@@ -50,6 +50,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Grafana", "Grafana", "{4526
 		prometheus-grafana\grafana\grafana.ini = prometheus-grafana\grafana\grafana.ini
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Databases", "Databases", "{32E83326-4CBA-4267-97A1-3F3975DAF3C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookingCatalog", "src\OtherThemes\Databases\BookingCatalog\BookingCatalog.csproj", "{DA436646-D291-49FC-B44C-A309D62E819F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookingCatalog.Graph_Neo4j_Data", "src\OtherThemes\Databases\BookingCatalog.Graph_Neo4j_Data\BookingCatalog.Graph_Neo4j_Data.csproj", "{AC17CD8D-56BB-4747-A637-EC60002D33C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookingCatalog.Core", "src\OtherThemes\Databases\BookingCatalog.Core\BookingCatalog.Core.csproj", "{FDB73A5C-22C2-4F7B-B60C-95461FE1D3E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -96,6 +104,18 @@ Global
 		{5DD4C1F6-9603-473B-8D74-52AADE814D9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DD4C1F6-9603-473B-8D74-52AADE814D9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DD4C1F6-9603-473B-8D74-52AADE814D9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA436646-D291-49FC-B44C-A309D62E819F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA436646-D291-49FC-B44C-A309D62E819F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA436646-D291-49FC-B44C-A309D62E819F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA436646-D291-49FC-B44C-A309D62E819F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC17CD8D-56BB-4747-A637-EC60002D33C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC17CD8D-56BB-4747-A637-EC60002D33C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC17CD8D-56BB-4747-A637-EC60002D33C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC17CD8D-56BB-4747-A637-EC60002D33C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDB73A5C-22C2-4F7B-B60C-95461FE1D3E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDB73A5C-22C2-4F7B-B60C-95461FE1D3E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDB73A5C-22C2-4F7B-B60C-95461FE1D3E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDB73A5C-22C2-4F7B-B60C-95461FE1D3E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -111,6 +131,10 @@ Global
 		{5DD4C1F6-9603-473B-8D74-52AADE814D9C} = {9A08111E-DDC3-45C6-8F5F-A583B5ABCC0B}
 		{97C1784F-2D61-4AFD-8835-47BCC3E750D5} = {3F244100-9D57-4278-A0F6-BE2429175FFE}
 		{45267CB2-6F3B-4750-81DF-40390E4331B7} = {3F244100-9D57-4278-A0F6-BE2429175FFE}
+		{32E83326-4CBA-4267-97A1-3F3975DAF3C1} = {8B5B87A5-D495-4D11-AC01-028B3F024071}
+		{DA436646-D291-49FC-B44C-A309D62E819F} = {32E83326-4CBA-4267-97A1-3F3975DAF3C1}
+		{AC17CD8D-56BB-4747-A637-EC60002D33C4} = {32E83326-4CBA-4267-97A1-3F3975DAF3C1}
+		{FDB73A5C-22C2-4F7B-B60C-95461FE1D3E2} = {32E83326-4CBA-4267-97A1-3F3975DAF3C1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5392DE2A-81FB-4D3D-9AA7-61B2AA2636B9}
