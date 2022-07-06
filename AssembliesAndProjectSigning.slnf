@@ -1,0 +1,10 @@
+{
+  "solution": {
+    "path": "GBSafety.sln",
+    "projects": [
+      "src\\OtherThemes\\AssembliesAndProjectSigning\\AppModule1\\AppModule1.csproj",
+      "src\\OtherThemes\\AssembliesAndProjectSigning\\AppModules.ConsoleApp\\AppModules.ConsoleApp.csproj",
+      "src\\OtherThemes\\AssembliesAndProjectSigning\\AppModules.Core\\AppModules.Core.csproj"
+    ]
+  }
+}
