@@ -1,0 +1,12 @@
+﻿
+<div class="card mb-1">
+	<div class="m-1">
+		<h4>@Book.Title</h4>
+		<h5><AuthorView Author="@Book.Author"/></h5>
+	</div>
+</div>
+
+@code {
+	[Parameter]
+	public Book Book { get; set; }
+}
